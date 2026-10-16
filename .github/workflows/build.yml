@@ -1,0 +1,56 @@
+name: build
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - uses: r-lib/actions/setup-pandoc@v2
+      - name: Instalar LibreOffice (para o PDF)
+        run: sudo apt-get update && sudo apt-get install -y libreoffice-writer
+      - name: Checar referências e numeração
+        run: python tools/check.py
+      - name: Gerar docx, html, pdf e md único
+        run: python tools/build.py all
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TinyPine-spec
+          path: dist/
+      - name: Publicar release (tags v*)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.docx
+            dist/*.pdf
+            dist/*.md
+      - name: Preparar Pages
+        if: github.ref == 'refs/heads/main'
+        run: mkdir -p _site && cp dist/index.html _site/index.html
+      - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main'
+        with: { path: _site }
+
+  pages:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

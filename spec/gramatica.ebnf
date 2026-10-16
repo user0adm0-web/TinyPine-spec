@@ -1,0 +1,45 @@
+(* TinyPine — gramática formal de parâmetros e chamadas (Capítulo 30.7).
+   Fonte única: este arquivo é incluído no texto da especificação pelo build. *)
+
+(* declaração *)
+FuncDecl        = "f" [ "const" ] IDENT "(" [ ParamList ] ")"
+                  [ ":" Type ] Block ;
+AnonFunc        = "f" "(" [ ParamList ] ")" Block ;
+
+(* no máximo três seções, nesta ordem: posicionais, tipados (após "?") e exclusivamente nomeados (após "!") *)
+ParamList       = PosSection [ "," TypedSection ] [ "," NamedSection ]
+                | TypedSection [ "," NamedSection ]
+                | NamedSection ;
+
+(* antes de "?" e "!": posicionais, nomeados opcionais e variádico; a ordem é restringida pelas observações abaixo *)
+PosSection      = PosItem { "," PosItem } ;
+PosItem         = PositionalParam | OptNamedParam | VariadicParam ;
+PositionalParam = ParamId [ Default ] ;
+OptNamedParam   = ExtName ":" ParamId [ Default ] ;
+
+(* iniciada por "?": parâmetros tipados, sem nome externo; o tipo é obrigatório *)
+TypedSection    = QuestionMarker "," TypedParam
+                  { "," TypedParam } ;
+QuestionMarker  = "?" ;
+TypedParam      = IDENT ":" Type [ Default ] ;
+
+(* iniciada por "!": só nomeados, obrigatórios ou, com Default, opcionais *)
+NamedSection    = BangMarker "," NamedParam
+                  { "," NamedParam } ;
+BangMarker      = "!" ;
+NamedParam      = ExtName ":" ParamId [ Default ] ;
+
+(* variádico: "package" é prefixo; o nome é IDENT, sem o "package" *)
+VariadicParam   = "package" IDENT ;
+
+(* elementos comuns *)
+ParamId         = IDENT [ ":" Type ] ;
+ExtName         = STRING | NUMBER ;
+Default         = "=" Expr ;
+
+(* argumentos de chamada *)
+CallArgs        = [ Arg { "," Arg } ] ;
+Arg             = NamedArg | PositionalArg ;
+NamedArg        = ( STRING | NUMBER ) ":" Expr
+                | IDENT "=" Expr ;
+PositionalArg   = Expr ;

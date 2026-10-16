@@ -1,0 +1,8 @@
+# Referências que o check.py aceita mesmo sem seção correspondente (arquivo:referência).
+# Falsos positivos (números de código, não de seção):
+06-tipos-primitivos-escalares.md:3.0
+06-tipos-primitivos-escalares.md:9.0
+# Referências antigas herdadas da v0.7 (decidir depois se viram seções ou se são corrigidas):
+ap-a-historico-da-especificacao.md:7.4
+ap-a-historico-da-especificacao.md:4.8.1
+ap-a-historico-da-especificacao.md:E
