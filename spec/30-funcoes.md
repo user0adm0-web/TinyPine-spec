@@ -355,9 +355,18 @@ pack(unpack A)              # [1, 2, 3]   — unpack A vira três argumentos: ar
 print(unpack A)             # 123 — print recebe 1, 2 e 3 como argumentos separados, sem separador
 ```
 
+**Repassar argumentos.** `package` e `unpack` juntos formam o padrão de repasse: a função variádica recebe os argumentos em `args` e os entrega, um a um, a outra chamada. O exemplo imprime o que receber, sem separador — é a base de um objeto "console" guardado em um dicionário (Capítulo 31.3):
+
+```tinypine
+f repassar(package ARGS)
+  print(unpack ARGS)
+repassar(1, 2, 3)       # 123
+repassar(2 ** 6)        # 64
+```
+
 ### Gramática Formal de Parâmetros
 
-Notação EBNF: terminais entre aspas; `|` separa alternativas; `[ ... ]` é opcional; `{ ... }` repete zero ou mais vezes. `IDENT` é um identificador (Capítulo 3.4), `STRING` e `NUMBER` são literais, `Expr` é uma expressão e `Type` é um tipo (Capítulos 5 e 6.8). Esta gramática complementa a estrutura de blocos do Capítulo 4.
+Notação EBNF: terminais entre aspas; `|` separa alternativas; `[ ... ]` é opcional; `{ ... }` repete zero ou mais vezes. `IDENT` é um identificador (Capítulo 3.4), `STRING` e `NUMBER` são literais, `Expr` é uma expressão e `Type` é um tipo (Capítulos 5, 6.8 e 6.9); dentro da gramática, `"|"` entre aspas é o operador de união de tipos (Capítulo 6.8.1), não o separador de alternativas. Esta gramática complementa a estrutura de blocos do Capítulo 4.
 
 <!-- include: gramatica.ebnf -->
 
@@ -375,7 +384,7 @@ Observações que tornam a gramática não ambígua para um parser:
 
 - `:` **em** `ParamId` introduz a anotação de tipo (Capítulos 5 e 6.8); em OptNamedParam/NamedParam, o primeiro `:` (logo após `ExtName`) separa o nome externo do identificador interno.
 
-- `:` **em** `NamedArg`**.** Em argumento de chamada, se o token após `:` for um dos tipos primitivos ou uma palavra `to-*` (Capítulos 5 e 8), o `:` é o operador de asserção/conversão aplicado a um `PositionalArg`; caso contrário, é o separador de `NamedArg`.
+- `:` **em** `NamedArg`**.** Em argumento de chamada, se o token após `:` for um nome de tipo (os tipos primitivos, mais `function`, Capítulo 6) ou uma palavra `to-*` (Capítulos 5 e 8), o `:` é o operador de asserção/conversão aplicado a um `PositionalArg`; caso contrário, é o separador de `NamedArg`.
 
 - **= em NamedArg.** Em argumento de chamada, `IDENT = expr` é sempre argumento nomeado (nunca atribuição) e só liga a parâmetro cujo nome externo é uma string igual a IDENT (Capítulo 30.3).
 

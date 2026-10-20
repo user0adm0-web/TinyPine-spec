@@ -31,7 +31,7 @@ Chaves numéricas agora são aceitas em dicionário — inclusive misturadas com
 
 *Chaves numérica e str combinadas — válido a partir da 0.5*
 
-Como o delimitador já determina se a coleção é lista ou dicionário, `colecao[N]` nunca é ambíguo quanto ao **tipo** da coleção. Dentro de um dicionário, porém, chaves numéricas tornam `colecao[N]` ambíguo entre busca por chave e acesso por posição — ambiguidade resolvida em favor da chave: em um dicionário, `colecao[N]` busca a chave `N`; o acesso por posição em um dicionário permanece disponível apenas nas formas explícitas `key:N` / `value:N` (19.2).
+Como o delimitador já determina se a coleção é lista ou dicionário, `colecao[N]` nunca é ambíguo quanto ao **tipo** da coleção. Dentro de um dicionário, porém, chaves numéricas tornam `colecao[N]` ambíguo entre busca por chave e acesso por posição — ambiguidade resolvida em favor da chave: em um dicionário, `colecao[N]` busca a chave `N`; a forma explícita `colecao[key N]` (19.2) faz essa mesma busca por chave, sem deixar dúvida de que `N` é uma chave.
 
 Uma coleção vazia declarada como `[]` já é uma lista vazia; uma coleção vazia declarada como `{}` já é um dicionário vazio — nenhuma das duas representa `void`. `void` continua sendo um valor distinto (Capítulo 7.2), atribuído apenas quando o programador omite um valor onde um era esperado.
 
@@ -46,20 +46,26 @@ var dictVazio  = {}              # dicionário vazio
 |-----------------------------------|---------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Por chave (dicionário)            | `colecao["A"]`      | Retorna o valor associado à chave. Se a chave existir sem valor associado, ver 19.3(a). Se a chave não existir, ver 19.3(b).                                                                  |
 | Por índice                        | `colecao[0]`        | Obtém o elemento na posição informada, respeitando a ordem de inserção. Em uma lista, retorna o valor armazenado nessa posição. Em um dicionário, retorna o valor do N-ésimo par chave:valor. |
-| Por chave, explícito (dicionário) | `colecao[key, 0]`   | Retorna a chave armazenada na posição informada. Só se aplica a dicionários — usar sobre uma lista é `TypeMismatch PROBLEM`, já que listas não têm chave.                                     |
-| Por valor, explícito (dicionário) | `colecao[value, 0]` | Retorna o valor armazenado na posição informada (`void`, se não houver valor associado).                                                                                                      |
+| Por chave, explícito              | `colecao[key K]`    | Retorna o elemento de chave `K`. Em lista e tupla a chave de cada elemento é o seu índice (`A[key 0]` é o primeiro elemento); em dicionário é a chave do par. Chave inexistente: ver 19.3(b). |
+| Por valor, explícito              | `colecao[value V]`  | Acesso pelo valor `V` (ver o exemplo abaixo; a semântica completa está em aberto — Apêndice A.2, B27).                                                                                       |
 
 ```tinypine
 var dados = {"Nome": "Dhavi", "Idade": 20, "Ativo"}
 dados[0]          # "Dhavi"
 dados[1]          # 20
 dados[2]          # void
-dados[key, 0]      # "Nome"
-dados[value, 0]    # "Dhavi"
-dados[value, 2]    # void
+dados["Nome"]     # "Dhavi"
+dados[key "Nome"] # "Dhavi" — o mesmo que dados["Nome"]
+
+var A = [1, 2, 3, 4]
+print(A[key 0])   # 1
+print(A[value 2]) # 2
+print(A[0])       # 1
 ```
 
-A ordem dos elementos é sempre preservada exatamente conforme a inserção; as operações por índice (`key, N`; `value, N`) usam essa mesma ordem.
+As formas explícitas `key K` e `value V` substituem as antigas `key, N` e `value, N` (e `key:N` / `value:N`), que deixam de existir. As mesmas formas, sem o nome da coleção, são usadas dentro da restrição de um tipo refinado (Capítulo 6.9).
+
+A ordem dos elementos é sempre preservada exatamente conforme a inserção; o acesso por índice (`colecao[N]`) usa essa mesma ordem.
 
 #### Fatia por Intervalo — \[a to b\]
 
@@ -85,6 +91,36 @@ A[3 to 1]       # IndexOutOfBounds PROBLEM — início depois do fim
 var t = "abcdef"
 t[1 to 3]       # "bcd"
 ```
+
+#### Valor de Função e Acesso por Ponto
+
+Um elemento de lista ou dicionário pode ser uma função (Capítulo 31): a coleção guarda a função, e ler o elemento a devolve **sem chamá-la**. Em dicionário, uma chave `str` que seja um identificador válido também pode ser lida com ponto: `D.chave` equivale a `D["chave"]`, inclusive quando a chave não existe — `KeyNotFound PROBLEM` (Capítulo 19.3). Sem parênteses, o ponto só lê a chave.
+
+```tinypine
+var D = {"dobro": f (x) do return x * 2 --}
+var F = D["dobro"]     # lê a função; não a chama
+var G = D.dobro        # o mesmo, com ponto
+print(F(4), G(5))      # 810
+```
+
+**Chamada com ponto.** Com parênteses, `D.chave(...)` **chama** a função guardada na chave `"chave"`. É o que permite a um dicionário de funções servir de objeto leve, sem declarar uma classe (Capítulo 31.3):
+
+```tinypine
+var console = {"log": f(package ARGS)
+  print(unpack ARGS)
+}
+console.log("Hello World!")     # Hello World!
+```
+
+As regras da chamada são as de qualquer função (Capítulo 30): parâmetros, `package`/`unpack`, valores de retorno e o escopo de criação da função anônima (ela enxerga as variáveis do lugar onde foi escrita, não as do lugar de onde é chamada). Casos particulares:
+
+| **Caso**                                                     | **Resultado**                                                                                         |
+|--------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| a chave não existe                                           | `KeyNotFound PROBLEM` (Capítulo 19.3)                                                                 |
+| a chave existe, mas o valor não é uma função                 | `TypeMismatch PROBLEM`: o valor guardado não pode ser chamado                                         |
+| a chave se chama `add` ou `remove`                           | vale o método da coleção (Capítulo 19.4); para chamar a função, leia-a antes: `var F = D["add"]`      |
+
+A chamada com ponto vale para dicionário. Em lista, e na forma `D["chave"](...)` (índice seguido de parênteses), a função ainda precisa ser lida para uma variável antes de ser chamada (Apêndice A, B26).
 
 ### Chave Inexistente versus Valor void
 

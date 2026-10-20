@@ -30,6 +30,14 @@ sin()   # não permitido — sin() pertence ao namespace math
 
 *^- Incorreto*
 
-### Função len()
+### Propriedade .length
 
-O TinyPine disponibiliza uma função nativa `len()`, fora do sistema de módulos, para obter o comprimento de uma coleção ou string. A assinatura completa — comportamento sobre cada tipo suportado (`str`, coleção, `tuple`) e casos de borda — ainda não está fechada (ver Histórico, Apêndice A).
+A partir da pós-0.7, o comprimento de um valor é lido pela propriedade `.length`, somente leitura e fora do sistema de módulos — da mesma forma que `.type` (Capítulo 6.7). `.length` **substitui** a antiga função `len()`: `len(A)` passa a ser `A.length`, com o mesmo comportamento.
+
+```tinypine
+var lista = ["a", "b", "c"]
+print(lista.length)     # 3
+print("Serpente".length) # 8
+```
+
+`.length` vale para `str`, `list`, `dict` e `tuple` e é a mesma medida usada pela propriedade `length` dos tipos refinados (Capítulo 6.9). O comportamento detalhado sobre cada tipo e os casos de borda ainda não estão fechados (ver Histórico, Apêndice A).

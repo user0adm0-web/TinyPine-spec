@@ -29,17 +29,17 @@ for i = 0, i < 10
 # Saída: 0 1 2 3 4 5 6 7 8 9
 || índice + elemento derivado ||
 var lista = ["a", "b", "c"]
-for i = 0, i < len(lista)
+for i = 0, i < lista.length
   var e = lista[i]
   print(i, e)
   i = i + 1
 || passo customizado (dois em dois) ||
-for i = 0, i < len(lista)
+for i = 0, i < lista.length
   var e = lista[i]
   print(i, e)
   i = i + 2
 || reverso ||
-for i = len(lista) - 1, i >= 0
+for i = lista.length - 1, i >= 0
   var e = lista[i]
   print(i, e)
   i = i - 1

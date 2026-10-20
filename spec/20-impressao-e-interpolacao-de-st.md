@@ -60,3 +60,15 @@ print("você é muito {A} e eu não gosto de \'\{\}\' ")
 ```
 
 No exemplo acima, `{A}` é substituído pelo valor da variável `A`, enquanto `\{` e `\}` produzem chaves literais, sem interpolação — ver Capítulo 3.2 para a lista completa de sequências de escape.
+
+### Expressões dentro de { }
+
+O que fica entre `{` e `}` não precisa ser só o nome de uma variável: também são aceitas expressões e propriedades (como `.length`, Capítulo 33.3). Os dois exemplos abaixo são válidos — não geram erro:
+
+```tinypine
+var A = 1
+format "{A-A}"        # válido
+format "{A.length}"   # válido
+```
+
+> ***Nota:*** *o resultado de cada um desses dois exemplos (a interação do* `-` *com a regra do Capítulo 3.4.1 e o* `.length` *de um número) ainda não está definido — Apêndice A.2, B28.*

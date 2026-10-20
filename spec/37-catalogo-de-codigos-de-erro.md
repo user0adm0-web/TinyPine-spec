@@ -15,6 +15,11 @@ Como regra geral, um token que reutiliza um símbolo, palavra reservada, variáv
 | `InvalidSpecialBlock (E309) PROBLEM`         | Execução           | Nome de bloco especial desconhecido (ex.: `[banana]`).                                                        |
 | `IndexOutOfBounds (E402) PROBLEM`            | Execução           | Índice de coleção negativo ou acima do tamanho da coleção.                                                    |
 | `UncaughtThrow (E310) PROBLEM`               | Execução           | `throw()` não capturado por nenhum `catch`.                                                                   |
+| `InvalidDirective (W101) WARNING`            | Léxico             | Instrução `#~` que não segue a gramática do Capítulo 3.1.1.                                                   |
+| `UnknownMention (W102) WARNING`              | Léxico             | Menção de `#~ hide` que não é um aviso do catálogo (ou é um erro).                                        |
+| `UnusedVariable (W201) WARNING`              | Análise estática   | Variável declarada e nunca lida no seu escopo (Capítulo 38).                                                  |
+| `UnreachableCode (W203) WARNING`             | Análise estática   | Código depois de `return`, `break`, `continue` ou `throw`, ou bloco de condição constante (Capítulo 38).      |
+| `UnusedFunction (W204) WARNING`              | Análise estática   | Função declarada e nunca chamada (Capítulo 38).                                                               |
 | `UncaughtInTry (W307) WARNING`               | Execução           | `try` sem `catch` capturou um erro internamente. Emite aviso; não aborta a execução.                          |
 | `MissingArgument (E501) PROBLEM`             | Execução           | Parâmetro posicional sem argumento e sem valor padrão (Capítulo 30.9).                                        |
 | `MissingNamedArgument (E502) PROBLEM`        | Execução           | Parâmetro nomeado obrigatório (depois de `!`) sem valor padrão, não fornecido.                                |
@@ -30,3 +35,4 @@ Como regra geral, um token que reutiliza um símbolo, palavra reservada, variáv
 | `ReadOnlyProperty (E313) PROBLEM`            | Execução           | Atribuição a ~Program ou a um de seus membros (Capítulo 29.4).                                                |
 | `LoadFileNotFound (E314) PROBLEM`            | Execução           | load apontou para um arquivo inexistente ou ilegível (Capítulo 29.5).                                         |
 | `CircularLoad (E315) PROBLEM`                | Execução           | Dois ou mais arquivos se carregam mutuamente por load (Capítulo 29.5).                                        |
+| `RefinementViolation (E316) PROBLEM`         | Execução           | Valor que não satisfaz a restrição de um tipo refinado (Capítulo 6.9).                                        |

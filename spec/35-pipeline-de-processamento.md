@@ -14,4 +14,8 @@
 | 8      | Execução                   | O programa é executado sobre a árvore já resolvida.                                                                                                                                                          |
 | 9      | Compilação                 | *(Reservado para uma versão futura — etapa posterior à execução.)*                                                                                                                                           |
 
+As instruções `#~` (Capítulo 3.1.1) são lidas junto com a análise léxica (etapa 1) e valem para os avisos de **todas** as etapas: ao serem emitidos (etapas 1 a 8), os avisos escondidos por um `#~ hide` simplesmente não aparecem.
+
+As restrições de tipos refinados (Capítulo 6.9) dependem do valor que está sendo validado e produzem `RefinementViolation PROBLEM` (E316) na execução (etapa 8); se a verificação pode ser antecipada para valores literais, na etapa 6, está em aberto (Apêndice A.2, B27).
+
 Referências antecipadas a identificadores (Capítulo 28.3) são válidas porque a etapa de Registro de IDs (5) precede a etapa de Execução (8).

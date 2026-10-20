@@ -118,7 +118,7 @@ if (A + B) > C
 `var S = "Serpente"
 
 if "" != S
-  pause len(S)+5*len(S);`
+  pause S.length+5*S.length;`
 
 > ***Nota:** Não obrigatório pois o TinyPine,  
 > tem um sistema inteligente que faz uma análise semântica*
@@ -195,3 +195,44 @@ Else do
 ...
 --
 ```
+
+### Função Anônima com Corpo por Indentação dentro de ( ), [ ] ou { }
+
+Dentro de `( )`, `[ ]` e `{ }`, a quebra de linha não encerra o statement: uma expressão pode ocupar várias linhas, e a indentação das linhas internas é puramente visual. A única exceção é o **corpo por indentação de uma função anônima** (Capítulo 31) escrita dentro desses delimitadores — como valor de um dicionário, elemento de uma lista ou argumento de uma chamada. Ali, a quebra de linha depois de `f (parâmetros)` abre o corpo, exatamente como no estilo do Capítulo 4.1.
+
+- **Referência de recuo.** O corpo é medido a partir do recuo da **linha onde está o** `f`, e não do statement que contém o literal: cada linha do corpo recua uma unidade (2 espaços ou 1 TAB, Capítulo 4.2.1) a mais que essa linha.
+
+- **Fim do corpo.** O corpo termina na primeira linha recuada no máximo como a linha do `f` — normalmente a que fecha o delimitador — ou no próprio delimitador de fechamento, quando ele aparece na mesma linha da última instrução. A linha que fecha o delimitador não faz parte do corpo.
+
+- **Dentro do corpo** valem as regras de sempre: blocos aninhados por indentação, `;` (Capítulo 4.7) e `return`. Delimitadores abertos dentro do corpo continuam ignorando as quebras de linha.
+
+- **Corpo vazio** — nenhuma linha recuada depois do cabeçalho — é `EmptyBlock PROBLEM` (Capítulo 36.1).
+
+- **Estilo delimitador.** `do` ... `--` (Capítulo 4.8) continua valendo dentro dos delimitadores, e a proibição de mistura (Capítulo 4.9) vale como em qualquer outro bloco.
+
+```tinypine
+var console = {"log": f(package ARGS)
+  print(unpack ARGS)
+}
+```
+
+*A linha do `f` está no recuo 0; o corpo recua 2 espaços; o `}` volta ao recuo 0 e encerra o corpo.*
+
+```tinypine
+var ops = {
+  "soma": f (a, b)
+    return a + b
+  ,
+  "dobro": f (x)
+    return x * 2
+}
+```
+
+*Aqui a linha do `f` está no recuo 2 e o corpo, no recuo 4. A linha da vírgula volta ao recuo 2 e encerra o corpo da primeira função; o `}` encerra o da segunda.*
+
+```tinypine
+var g = {"a": f (x)
+}
+```
+
+*EmptyBlock PROBLEM — nenhuma linha recuada depois do cabeçalho da função.*

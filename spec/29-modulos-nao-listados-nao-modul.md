@@ -61,7 +61,7 @@ O prefixo `~` é reservado pela linguagem para os objetos nativos do programa. U
 | `~Program`         | `dict`           | Dicionário com as chaves "path", "lines", "line" e "content", cujos valores são os membros abaixo; `~Program["path"]` equivale a `~Program.path`.                                                                                                                                      |
 | `~Program.path`    | `str`            | Caminho absoluto resolvido do arquivo `.tpine`, com o nome do arquivo e o separador nativo do sistema operacional. `""` quando não há arquivo (terminal interativo, entrada padrão).                                                                                                   |
 | `~Program.lines`   | `int`            | Número de linhas. Um `\n` final não cria linha extra; arquivo vazio tem 0 linhas.                                                                                                                                                                                                      |
-| `~Program.line`    | `dict<int, str>` | Dicionário de chaves inteiras 1, 2, …, `lines` — a numeração começa em 1, a mesma das mensagens de erro — e valores `str` com o texto da linha, sem a quebra de linha.                                                                                                                 |
+| `~Program.line`    | `dict\keys: int, values: str\` | Dicionário de chaves inteiras 1, 2, …, `lines` — a numeração começa em 1, a mesma das mensagens de erro — e valores `str` com o texto da linha, sem a quebra de linha.                                                                                                                 |
 | `~Program.line[N]` | `str`            | Linha de número N (N ≥ 1). Em `~Program.line`, `[-N]` conta a partir do fim (`[-1]` é a última linha): regra própria deste dicionário, que não altera a regra geral de `colecao[N]` em dicionários (Capítulo 19.1). N = 0, N \> `lines` ou N \< -`lines` é `IndexOutOfBounds PROBLEM`. |
 | `~Program.content` | `str`            | Texto completo do arquivo, com as quebras de linha normalizadas para `\n` e sem BOM.                                                                                                                                                                                                   |
 
@@ -71,7 +71,7 @@ print(~Program.lines)
 print(~Program.line[1])    # primeira linha
 print(~Program.line[-1])   # última linha
 print(~Program["lines"])   # o mesmo que ~Program.lines
-var linhas = ~Program.line   # dict<int, str>
+var linhas = ~Program.line   # dict\keys: int, values: str\
 print(linhas[3])             # chave 3 — a terceira linha
 var ~x = 1                  # ReservedSymbol PROBLEM
 f ~g()                      # ReservedSymbol PROBLEM
@@ -81,7 +81,7 @@ print(~Outro)               # ReservedSymbol PROBLEM
 print(~Program.line[999])   # IndexOutOfBounds PROBLEM
 ```
 
-**Fatia de linhas.** `~Program.line[a to b]` devolve uma lista de `str` com as linhas de `a` a `b`, as duas incluídas, numeradas a partir de 1; um limite negativo conta a partir do fim, como em `~Program.line[-N]`. Limite fora de 1 a `lines`, ou início depois do fim, é `IndexOutOfBounds PROBLEM`. Como os demais membros, é somente leitura, e a análise estática a tipa como `list<str>`. Os demais dicionários não têm fatia (Capítulo 19.2.1).
+**Fatia de linhas.** `~Program.line[a to b]` devolve uma lista de `str` com as linhas de `a` a `b`, as duas incluídas, numeradas a partir de 1; um limite negativo conta a partir do fim, como em `~Program.line[-N]`. Limite fora de 1 a `lines`, ou início depois do fim, é `IndexOutOfBounds PROBLEM`. Como os demais membros, é somente leitura, e a análise estática a tipa como `list\values: str\`. Os demais dicionários não têm fatia (Capítulo 19.2.1).
 
 ```tinypine
 print(~Program.line[1 to 3])      # as três primeiras linhas, em uma lista
@@ -101,7 +101,7 @@ print(~Program.path)     # no terminal interativo: "" (texto vazio)
 
 **Em arquivos carregados e importados.** Dentro de um arquivo carregado por `load` (29.5), `~Program` descreve o próprio arquivo carregado; de fora, ele é acessado como `Y.~Program`. Dentro de um arquivo trazido por `import` (29.3), `~Program` continua descrevendo o arquivo principal, já que o `import` incorpora o código ao programa.
 
-**Análise estática.** Os tipos dos membros são conhecidos antes da execução — `path` e `content` são `str`, `lines` é `int`, `line` é `dict<int, str>` — e entram na Análise Estática de Tipos (Capítulo 35, etapa 6).
+**Análise estática.** Os tipos dos membros são conhecidos antes da execução — `path` e `content` são `str`, `lines` é `int`, `line` é `dict\keys: int, values: str\` — e entram na Análise Estática de Tipos (Capítulo 35, etapa 6).
 
 ### load \<caminho\> as Y — carrega um arquivo sob um apelido
 

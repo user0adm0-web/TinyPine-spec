@@ -28,7 +28,7 @@ As decisões marcadas **Aceita** foram confirmadas pelo autor do projeto; as dem
 | B3     | \~~Sintaxe de edição/adição em coleções mutáveis\~~                                                                                                                                                                                                                                | 19.4         | **Resolvido** — `add()`/`remove()`                                               |
 | B4     | Especificação comportamental do módulo output — o módulo não consta mais da tabela do Cap. 34.1 nem tem seção própria (a antiga 34.5 foi removida); a saída é tratada por print/println (Cap. 20)                                                                                  | 20           | Média — confirmar se o módulo ainda é planejado.                                 |
 | B5     | Comportamento de cada operador aritmético sobre cada par de tipos primitivos (precedência geral já definida em 12.1)                                                                                                                                                               | 13           | Média.                                                                           |
-| B6     | Assinatura completa de `len()`                                                                                                                                                                                                                                                     | 33.3         | Média.                                                                           |
+| B6     | Comportamento completo de `.length` (que substitui `len()`)                                                                                                                                                                                                                                                     | 33.3         | Média.                                                                           |
 | B7     | Etapa "Expansão de Aliases" do pipeline — mencionada em versões anteriores deste documento, nunca definida em nenhum capítulo                                                                                                                                                      | 35           | Média.                                                                           |
 | B8     | Sistema de objetos: herança, interfaces, métodos privados/estáticos, sobrecarga                                                                                                                                                                                                    | 40           | Baixa — declarado pelo próprio projeto como futuro.                              |
 | B9     | Gerenciamento de memória (GC vs. contagem de referências)                                                                                                                                                                                                                          | 41           | Baixa — declarado pelo próprio projeto como futuro.                              |
@@ -48,6 +48,10 @@ As decisões marcadas **Aceita** foram confirmadas pelo autor do projeto; as dem
 | B23    | Consumo de gerador (emit) fora de print/println com um único argumento posicional: hoje a função roda até o fim e devolve a lista dos valores emitidos                                                                                                                             | 23.2.2       | Média.                                                                           |
 | B24    | Marcador ? (Cap. 30.4.1): regras fixadas pelo interpretador sem previsão na especificação (não coexistir com package, no máximo uma seção, só antes de !, tipos únicos) e escolha entre tipos que se sobrepõem (int e float, tipo dinâmico) — ver explicação logo abaixo da tabela | 30.4.1       | Média.                                                                           |
 | B25    | Módulo computer (Cap. 34.7): nomes de tecla e apelidos, janela de 200 ms de pressed fora do Windows, dependência de xdotool e de ferramentas de clipboard no Linux/macOS, valores de output-type do shell                                                                          | 34.7         | Baixa — comportamento já implementado.                                           |
+| B26    | Chamada de função guardada em coleção por índice: `D["chave"](...)` e a chamada direta de elemento de lista — hoje `ParserError PROBLEM`; a função só é chamada depois de lida para uma variável. A chamada com ponto em dicionário (`D.chave(...)`) foi definida (Cap. 19.2.2, 31.3) | 19.2.2, 31.3 | Baixa — parcialmente resolvida: o caso `console.log(...)` funciona. |
+| B27    | Tipos refinados `tipo\restrição\` (Cap. 6.9) e acesso `key K` / `value V` (Cap. 19.2): pontos em aberto — ver explicação logo abaixo da tabela                                                                                                                                        | 6.9, 19.2    | Alta — recurso novo, decisão do autor ainda incompleta.             |
+| B28    | Interpolação `{ }` com expressões (Cap. 20.2): resultado de `format "{A-A}"` e de `format "{A.length}"` com `var A = 1` (ambos válidos, resultado não definido)                                                                                                                       | 20.2         | Média.                                                              |
+| B29    | Tipagem estruturada por `\...\`, união `\|` e tipo `function` (Cap. 6.7 a 6.9): tipos aninhados sem equivalente, quando falha e com qual erro, `\|` fora de `keys:`/`values:`, `\|` e `\|\|`, `keys` fora de `dict` — ver explicação logo abaixo da tabela          | 6.7 a 6.9    | Alta — recurso novo, decisão do autor ainda incompleta.             |
 
 **B19 — sintaxe de load (decisão em aberto).** Hoje vale `load "caminho" as Y` (Capítulo 29.5). A alternativa em discussão é uma função de `os`: `os.load("caminho", "as": "Y")`. Nenhuma das duas foi adotada em definitivo; o Capítulo 29.5 continua normativo.
 
@@ -64,6 +68,49 @@ As decisões marcadas **Aceita** foram confirmadas pelo autor do projeto; as dem
 **B24 — marcador** `?` **(decisões do interpretador).** A especificação original só trazia o exemplo `f a(?, e: int, a: str)` (30.4.1). Foram fixados no interpretador, sem previsão no texto: `?` aparece no máximo uma vez, antes de `!`; não coexiste com `package`; sem nome externo; tipo obrigatório e único por parâmetro; o argumento liga ao primeiro parâmetro tipado livre, na ordem de declaração, que aceita o seu tipo. Consequência a decidir: um `int` aceito por um `float` livre (com ImplicitNumericConversion WARNING) pode tirar o argumento do `int` seguinte — com `f F(?, x: float, y: int)`, `F(2, 2.5)` é `TypeMismatch PROBLEM`, e `F(2.5, 2)` funciona. As alternativas são preferir o tipo exato antes do conversível ou proibir tipos sobrepostos na mesma seção.
 
 **B25 — módulo** `computer`**.** Fixados no interpretador, sem previsão no texto: o conjunto de nomes de tecla e seus apelidos; `"output-type"` do shell como `"0"` (êxito) ou `"1"` (falha); `pressed` fora do Windows como janela de 200 ms sobre eventos do terminal, que consome as teclas lidas; `press`/`write` no Linux por `xdotool`; área de transferência no Linux/macOS por `wl-copy`/`wl-paste`, `xclip`, `xsel`, `pbcopy`/`pbpaste`. O exemplo original de saída do shell (`"input": "Write-Output"`, `"output": " Hello World!"`) não é reproduzível por um processo real e foi substituído por `"input"` com o comando inteiro e `"output"` sem o espaço inicial.
+
+**B26 — chamada de função guardada em coleção (parcialmente resolvida).** `D.chave(...)` foi definida: chama a função guardada na chave de um dicionário (Capítulo 19.2.2 e 31.3), com `KeyNotFound PROBLEM` para chave ausente e `TypeMismatch PROBLEM` para valor que não é função; `add` e `remove` continuam sendo os métodos da coleção. Fica em aberto a chamada por índice, `D["chave"](...)` (hoje `ParserError PROBLEM`), e a de elemento de lista (`L[0](...)`), que exigiriam que uma expressão de índice aceitasse parênteses logo depois.
+
+- **A favor de também permitir a forma por índice:** é a única maneira de chamar uma chave que não é um identificador válido (`D["meu-log"](...)`) ou que se chama `add`/`remove`; é coerente com a função ser valor de primeira classe (Capítulo 31.1).
+
+- **Contra:** `X[i](...)` mudaria a gramática de chamada (hoje só um nome ou um método é chamado); a leitura para uma variável já resolve o caso.
+
+
+**B27 — tipos refinados e acesso por** `key`**/**`value`**.** Decididos (Cap. 6.9 e 19.2): a sintaxe `tipo\restrição\` (que substituiu a primeira proposta, com `<...>`), os tipos aceitos, as propriedades `value`, `length`, `key K` e `value V`, as regras de validação, os operadores, as condições separadas por vírgula e o erro `RefinementViolation (E316)`. O código E316 foi escolhido na redação desta revisão e pode ser trocado. Em aberto:
+
+- **`value V`.** O exemplo `A[value 2] # 2` (com `var A = [1, 2, 3, 4]`) não diz se `value V` procura o valor `V` na coleção ou lê o segundo valor contando de 1 — e, na primeira leitura, o que acontece quando o valor não existe. O mesmo vale para `value 2 < 3` em `[1, 2, 3]: list\values: int, value 2 < 3, key 0==1\`.
+
+- **Perda do acesso à chave por posição.** `key K` e `value V` substituem as formas `key, N` e `value, N` (e `key:N` / `value:N`); com elas saiu a única maneira de ler a **chave** armazenada numa posição de um dicionário. Dizer se isso é intencional ou se ganha outra forma.
+
+- **`values`.** *Resolvido na pós-0.7:* `values: T` afirma que todo valor da coleção é do tipo `T`, e `keys: T` faz o mesmo com as chaves (Cap. 6.8 e 6.9).
+
+- **Chave ausente dentro de uma restrição.** Em `{1: ""}: dict\key "a"==1 or key 1==""\` a chave `"a"` não existe: dá `KeyNotFound PROBLEM` (Cap. 19.3) ou a condição é simplesmente falsa?
+
+- **Conversão dentro da restrição.** `[1, 0]: list\key 0: to-str\` termina com `["1", 0]`, ou seja, a restrição altera o valor; a regra 2 diz que a restrição é avaliada depois da conversão. Falta dizer qual das duas formas de conversão vale quando se combinam.
+
+- **Onde se aplica.** Os exemplos mostram a asserção e a declaração de `var`; a gramática provisória permite o tipo refinado em qualquer posição de `Type` (parâmetro e retorno de função, Cap. 30.3 e 30.4), o que ainda não foi confirmado. Como combina com a tipagem estruturada (Cap. 6.8) está resolvido — `list<...>`/`dict<...>` foram substituídas por `keys:`/`values:` dentro do próprio tipo refinado —, e `.type` não é afetado (Cap. 6.7). Falta dizer o que o tipo refinado significa em parâmetro e retorno.
+
+- **Tipo que não aceita refinamento** (por exemplo `bool`): o erro não está definido.
+
+- **Verificação estática.** Hoje a verificação é na execução (Cap. 35); antecipar para literais fica para depois.
+
+- **Nome do tipo.** O rascunho original escrevia `tupla`; a especificação usa `tuple` (Cap. 19.5) e foi o que entrou.
+
+**B28 — interpolação com expressões.** O autor confirmou que `var A = 1` seguido de `format "{A-A}"` e de `format "{A.length}"` é válido (Cap. 20.2). Não está dito (a) se `{A-A}` é a subtração `A - A`, apesar de a regra do Cap. 3.4.1 tratar `A-A` colado como um nome, e (b) qual é o `.length` de um número (Cap. 33.3).
+
+**B29 — tipagem estruturada por** `\...\`**, união** `|` **e tipo** `function`**.** Decididos (Cap. 6.7 a 6.9): `list<...>` e `dict<...>` deixam de existir, e nenhum tipo usa `<...>`; a tipagem estruturada é o tipo refinado com `keys:` (chaves de `dict`) e `values:` (valores de `list`, `dict` e `tuple`); o operador `|` é a união de tipos ("ou"), no lugar de `<T1, T2>` e de `[T1, T2]`; `function` é um tipo novo e `.type` de uma função devolve `"function"`. Em aberto:
+
+- **Tipos aninhados.** `dict<str, dict<str, int>>` declarava a estrutura interna; a regra do Cap. 3.2 (a restrição é fechada pela próxima `\`) impede uma restrição dentro de outra, então hoje só existe `values: dict`, sem estrutura interna. Opções: (a) manter assim; (b) permitir aninhamento com uma regra de pareamento das barras; (c) outra forma de declarar o tipo interno.
+
+- **Quando falha, e com qual erro.** Foi mantido o comportamento da anotação antiga — `keys:`/`values:` em declaração, parâmetro e retorno são verificados estaticamente (`StaticTypeMismatch`, E201), e em asserção direta sobre um valor, na execução (`RefinementViolation`, E316). Confirmar se é isso, ou se tudo passa a ser E316, ou tudo estático.
+
+- **`|` em qualquer posição de tipo.** A união foi escrita como válida em toda posição de tipo (asserção, var/const, parâmetro, retorno), não só dentro de `keys:`/`values:`. Não está definido como ela combina com o marcador `?` (Cap. 30.4.1, B24: "cada tipo aparece uma só vez" — a quais argumentos `e: int | str` se liga?), com o `:` de asserção num argumento de chamada (Cap. 30.7) e com valor padrão.
+
+- **Lexer.** `||` abre comentário de bloco, então `str||int` (sem espaços) não é uma união; `|>` é o pipe. O `|` solto fora de posição de tipo foi escrito como `ParserError`.
+
+- **`keys` fora de `dict`.** Em lista e tupla as chaves são os índices (`key K`, Cap. 19.2); `keys:` num tipo `list`/`tuple` não foi definido. Também não está dito o erro de usar `keys`/`values` em tipo que não aceita refinamento (mesma lacuna de B27).
+
+- **`function`.** Não está dito se `.type` de método de classe e de função nativa de módulo (por exemplo `math.sqrt`) também é `function`, nem se `function` precisa ser tratada como nome reservado.
 
 ### Decisões Aceitas — Sintaxe e Semântica
 
@@ -94,6 +141,20 @@ Mudanças de comportamento ou de sintaxe já confirmadas pelo autor do projeto, 
 - **readln() ganha três argumentos nomeados de representação visual —** `show`**,** `sep` **e** `last` **(Cap. 21.1, novo) — coexistem com** `min`**/**`max`**/**`active` **sem alterá-los; controlam só a exibição da entrada no console, nunca o valor retornado.**
 
 - **Novo operador if pós-expressão (Cap. 12.4, novo) — adicionado à lista de operadores-palavra (Cap. 3.4.1) e à tabela de precedência geral (Cap. 12.1), com a menor prioridade da linguagem, abaixo até de** `|>`**. Distinto da estrutura condicional de bloco do Capítulo 22, que permanece inalterada.**
+
+- **Função anônima com corpo por indentação dentro de** `( )`**,** `[ ]` **ou** `{ }` **(Cap. 4.11, 31.3) — o corpo é medido a partir da linha do** `f` **e termina em linha recuada no máximo como ela ou no delimitador de fechamento. O uso já era previsto pelo exemplo do Capítulo 31 (função como argumento em várias linhas), mas o interpretador o rejeitava com** `EmptyBlock PROBLEM`**; a regra passa a estar escrita.**
+
+- **Valor de função em coleção e leitura de chave de dicionário por ponto (Cap. 19.2.2, 31.3) —** `D.chave` **equivale a** `D["chave"]` **para leitura; a chamada direta com ponto, `D.chave(...)`, está definida (Cap. 19.2.2); a chamada por índice permanece indefinida (B26).**
+
+- **Padrão de repasse** `package` **+** `unpack` **(Cap. 30.6) — a função variádica entrega seus argumentos, um a um, a outra chamada, como em** `f(package ARGS) print(unpack ARGS)`**.**
+
+- **Tipos refinados (Cap. 6.9) —** `tipo\restrição\`**, em** `int`**,** `float`**,** `decim`**,** `num`**,** `str`**,** `list`**,** `dict` **e** `tuple`**, com as propriedades** `value`**,** `length`**,** `key K` **e** `value V`**. A barra invertida (Cap. 3.2) substituiu o rascunho com** `<...>` **para não colidir com** `<`**,** `>`**,** `<=` **e** `>=`**. Erro novo:** `RefinementViolation (E316)`**. Pontos em aberto em B27.**
+
+- **Propriedade** `.length` **(Cap. 33.3) —** `A.length` **substitui** `len(A)`**, com o mesmo comportamento; os exemplos dos Capítulos 4 e 23 foram atualizados.**
+
+- **Acesso explícito** `colecao[key K]` **e** `colecao[value V]` **(Cap. 19.2) — substituem** `key, N`**,** `value, N` **e** `key:N`**/**`value:N`**; em lista e tupla a chave é o índice, então** `A[key 0]` **é o primeiro elemento. A mensagem** `TypeMismatch` **"Lists have no keys" (Cap. 36.7) foi removida. Pontos em aberto em B27.**
+
+- **Interpolação** `{ }` **aceita expressões e propriedades (Cap. 20.2) —** `format "{A-A}"` **e** `format "{A.length}"` **são válidos; resultado em aberto (B28).**
 
 ### Corrigido
 
@@ -314,3 +375,37 @@ Escopo desta revisão: Cap. 9.2, 13, 18.4, 19.2.1 (novo), 19.4.1, 23.2.2, 26, 29
 - **Pendências:** B13 reescrita, B14 renumerada, B20 encerrada, B21 mitigada, novas B24 (marcador `?`) e B25 (módulo `computer`).
 
 Escopo desta revisão: Cap. 19.4.2 (renumerado), 30.1, 30.3 a 30.9, 34.1, 34.6 a 34.8 e 37 (E111, E123, E617, E618); Apêndice A.2 (B12 a B14, B20, B21, B24, B25). O Sumário em cache foi corrigido na numeração, mas os números de página só se atualizam no Word (clique com o botão direito no Sumário e escolha Atualizar campo, ou F9). Capa mantida em "Versão 0.7".
+
+**Terceira sessão de sincronização com o Sys (pós-0.7) — instruções `#~` e avisos de código morto:** resumo das decisões:
+
+- **Instruções ao TinyPine `#~` (Cap. 3.1.1):** nova forma de comentário que o TinyPine lê como comando. A primeira instrução é `#~ hide the W301` (`#~` abre o comando, `hide` é o que fazer, `the` indica que a próxima palavra é uma menção, `W301` é a menção — código ou nome de um aviso); o `the` é **opcional**, e `#~ hide W301` faz o mesmo: o aviso não é emitido. Alcance: na mesma linha de um código, só aquela linha; em linha própria, dali até o fim do arquivo (no terminal interativo, pela sessão). Só avisos podem ser escondidos. Uma instrução inválida nunca é ignorada em silêncio: emite `InvalidDirective (W101)` ou `UnknownMention (W102)`.
+- **Cap. 3.1:** a frase "o TinyPine define três formas de comentário", que aparecia sem a lista, foi reescrita como duas formas de comentário (`#` e `|| ... ||`) mais a forma de instrução `#~`.
+- **Avisos novos (Cap. 36.7, 37, 38):** `InvalidDirective (W101)`, `UnknownMention (W102)`, `UnreachableCode (W203)` (código depois de `return`/`break`/`continue`/`throw`, e blocos de condição constante) e `UnusedFunction (W204)` (função nunca chamada).
+- **`UnusedVariable (W201)` por escopo (Cap. 38):** o Cap. 38 já dizia que a análise considera o escopo; a implementação olhava o programa inteiro e agora liga cada leitura à declaração visível. O que conta como uso e o que nunca gera o aviso ficaram escritos no capítulo.
+- **Pipeline (Cap. 35):** nota de que as instruções `#~` valem para os avisos de todas as etapas.
+- **Chamada com ponto em dicionário (Cap. 19.2.2, 31.3; B26 parcialmente resolvida):** `D.chave(...)` chama a função anônima guardada numa chave de dicionário, o que permite um objeto leve como `console.log("Hello World!")` (`var console = {"log": f(package ARGS) print(unpack ARGS)}`). Chave ausente: `KeyNotFound PROBLEM`; valor que não é função: `TypeMismatch PROBLEM`; as chaves `add` e `remove` continuam sendo os métodos da coleção. A chamada por índice, `D["chave"](...)`, e a de elemento de lista seguem em aberto (B26).
+
+Escopo desta revisão: Cap. 3.1 e 3.1.1 (novo), 19.2.2, 31.3, 35, 36.7, 37 e 38; Apêndice A.2 (B26). Capa mantida em "Versão 0.7". Ideias que ficaram de fora de propósito: outros comandos além de `hide` (por exemplo, uma instrução para voltar a emitir um aviso escondido) e esconder vários avisos numa só linha.
+
+**Quarta sessão de sincronização com o Sys (pós-0.7) — tipos refinados, `.length` e acesso por `key`/`value`:** resumo das decisões:
+
+- **Tipos refinados (Cap. 6.9, novo):** sintaxe `tipo\restrição\` (a versão com `<*>` foi trocada por `\*\`), tipos aceitos, propriedades, regras de validação, operadores e condições separadas por vírgula (basta uma falsa para dar erro). Lexer: a barra invertida fora de string passa a ter este único uso (Cap. 3.2). Gramática provisória em `gramatica.ebnf`.
+- **Erro novo:** `RefinementViolation (E316) PROBLEM` (Cap. 36.7, 37); nota no pipeline (Cap. 35) de que a restrição é verificada na execução.
+- **`.length` (Cap. 33.3):** `len(*)` vira `*.length`; "a mesma coisa de `len`" foi a resposta do autor à pendência de semântica de `length`. Cap. 4 e 23 atualizados.
+- **Acesso por `key K` / `value V` (Cap. 19.1 e 19.2):** formas antigas removidas; mensagem "Lists have no keys" removida do Cap. 36.7.
+- **Interpolação (Cap. 20.2, novo):** `{A-A}` e `{A.length}` são válidos dentro de `format`.
+- **Pendências:** novas B27 (tipos refinados e `key`/`value`) e B28 (interpolação); B6 reescrita para `.length`.
+
+Escopo desta revisão: Cap. 3.2, 4.7, 5, 6.9 (novo), 19.1 e 19.2, 20.2 (novo), 23, 33.3, 35, 36.7, 37 e `gramatica.ebnf`; Apêndice A.2 (B6, B27, B28). Capa mantida em "Versão 0.7". Ideias que ficaram de fora de propósito: tipos refinados em `bool` e em outros tipos, e restrições aninhadas.
+
+**Quinta sessão de sincronização com o Sys (pós-0.7) — tipagem estruturada por `\...\`, união `|` e tipo `function`:** resumo das decisões:
+
+- **`<...>` removido de todos os tipos (Cap. 6.8):** `list<...>` e `dict<chave, valor>` (e a união `<T1, T2>`/`[T1, T2]` dentro delas) deixam de existir; a sintaxe antiga não coexiste com a nova. Equivalências: `list<int, str>` → `list\values: int | str\`; `dict<str, [str, int]>` → `dict\keys: str, values: str | int\`.
+- **Propriedades `keys` e `values` (Cap. 6.9):** `keys: T` (toda chave de `dict` é `T`) e `values: T` (todo valor de `list`/`dict`/`tuple` é `T`) entram na tabela de propriedades do tipo refinado; a pendência do `values` em B27 foi encerrada.
+- **Operador `|` (Cap. 6.8.1, novo):** união de tipos ("ou"), válido em toda posição de tipo; substitui `<T1, T2>`.
+- **Tipo `function` (Cap. 6.7):** `.type` de uma função nomeada ou anônima devolve `"function"`; `function` é nome de tipo (asserção, declaração, `keys:`/`values:`), sem refinamento.
+- **Nota do `.type` (Cap. 6.7):** o texto "reportando `list ou dict`" foi corrigido para "`list` e `dict`".
+- **Cap. 29.4 (`~Program.line`):** `dict<int, str>` → `dict\keys: int, values: str\`; `list<str>` → `list\values: str\`. Cap. 30.7 e `gramatica.ebnf`: `Type` com união `|` e `function` entre os nomes de tipo.
+- **Pendências:** nova B29 (tipos aninhados sem equivalente, erro estático × execução, `|` em toda posição, `||`/`|>`, `keys` fora de `dict`, `function` em método/função nativa); B27 atualizada.
+
+Escopo desta revisão: Cap. 6.7, 6.8, 6.8.1 (novo), 6.9, 29.4, 30.7 e `gramatica.ebnf`; Apêndice A.2 (B27, B29). Capa mantida em "Versão 0.7". Entradas históricas anteriores, que citam `list<...>`/`dict<...>`, ficaram como estavam. Ideias que ficaram de fora de propósito: tipos aninhados, `function` com assinatura (parâmetros e retorno) e testes executáveis dos exemplos novos (dependem do Sys).

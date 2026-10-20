@@ -6,7 +6,13 @@ Esta seção descreve os elementos léxicos do TinyPine: comentários, sequênci
 
 ### Comentários
 
-O TinyPine define três formas de comentário:
+O TinyPine define duas formas de comentário e uma forma de **instrução ao TinyPine** escrita dentro de um comentário (3.1.1):
+
+| **Forma**   | **Alcance**                                   | **Efeito**                                  |
+|-------------|-----------------------------------------------|---------------------------------------------|
+| `# ...`     | até o fim da linha                            | nenhum                                      |
+| `\|\| ... \|\|` | várias linhas, até o `\|\|` de fechamento      | nenhum                                      |
+| `#~ ...`    | até o fim da linha                            | instrução ao TinyPine (ver 3.1.1)           |
 
 Exemplo de uso combinado:
 
@@ -19,9 +25,71 @@ repeat 2 # abre bloco repeat
 
 Comentários não possuem efeito semântico: são removidos pelo analisador léxico antes da etapa de *parsing* (ver Capítulo 35) e não podem alterar fluxo de execução, escopo ou modificadores.
 
+#### Instruções ao TinyPine — `#~`
+
+`#~` é um comentário para quem lê o programa e, ao mesmo tempo, uma **instrução ao TinyPine**: o interpretador ignora o texto como código, mas lê o que vem depois de `#~` como um comando. A instrução disponível hoje é `hide`, que impede a emissão de um aviso:
+
+```tinypine
+#~ hide W301
+#~ hide the W301      # o mesmo: o "the" é opcional
+```
+
+Cada peça da instrução tem um papel fixo:
+
+| **Peça** | **Papel**                                                                                                                     |
+|----------|-------------------------------------------------------------------------------------------------------------------------------|
+| `#~`     | abre uma instrução ao TinyPine. Sem uma instrução válida depois dele, o TinyPine emite um aviso (abaixo).                       |
+| `hide`   | o que fazer: não emitir (esconder) o aviso mencionado.                                                                         |
+| `the`    | **opcional**: indica que a próxima palavra é uma **menção**. `#~ hide W301` e `#~ hide the W301` fazem a mesma coisa.         |
+| `W301`   | a menção: o **código** (`W301`) ou o **nome** (`ImplicitVoid`) de um aviso do catálogo (Capítulo 36.7).                         |
+
+Gramática:
+
+```ebnf
+Instruction = "#~" Command [ "#" TEXT ] ;
+Command     = "hide" [ "the" ] Mention ;
+Mention     = WARNING_CODE | WARNING_NAME ;
+```
+
+O texto depois de um segundo `#` é só uma nota e é ignorado: `#~ hide W301 # o valor chega depois`.
+
+**Alcance.** O alcance de um `hide` depende de onde ele está escrito:
+
+| **Onde**                                   | **Esconde**                                                                  |
+|--------------------------------------------|------------------------------------------------------------------------------|
+| na mesma linha de um código                | os avisos daquela linha (ou do trecho de várias linhas que a contém)         |
+| em linha própria                           | os avisos dali até o fim do arquivo                                          |
+| em linha própria, no terminal interativo   | os avisos pelo resto da sessão                                               |
+
+Uma instrução vale só no arquivo em que está escrita: um arquivo carregado com `load` (Cap. 29.5) tem as suas.
+
+```tinypine
+var a #~ hide W301
+var b
+#~ hide the UnusedVariable
+var c
+```
+
+No exemplo, o `ImplicitVoid WARNING` de `a` é escondido; o de `b` continua sendo emitido; o `UnusedVariable WARNING` de `c` (e de tudo o que vier abaixo) é escondido.
+
+**Só avisos podem ser escondidos.** Um erro nunca é escondido: `#~ hide E301` (ou `#~ hide the E301`) é uma instrução inválida (`UnknownMention WARNING`). O que `hide` esconde é a **emissão**: o programa se comporta exatamente como se o aviso não existisse, e um aviso que nunca aconteceria não faz a instrução falhar.
+
+**Instruções inválidas.** Nada depois de `#~` é ignorado em silêncio. Toda instrução que não segue a gramática acima emite um aviso, na posição da própria instrução:
+
+| **Caso**                                          | **Aviso**                              | **Exemplo**                       |
+|---------------------------------------------------|----------------------------------------|-----------------------------------|
+| nada depois de `#~`                               | `InvalidDirective (W101)`              | `#~`                              |
+| comando desconhecido                              | `InvalidDirective (W101)`              | `#~ show the W301`                |
+| `hide` sem menção                                 | `InvalidDirective (W101)`              | `#~ hide` · `#~ hide the`         |
+| palavras sobrando depois da menção                | `InvalidDirective (W101)`              | `#~ hide W301 now`                |
+| menção que não é um aviso do catálogo             | `UnknownMention (W102)`                | `#~ hide the W999`                |
+| menção a um erro                                  | `UnknownMention (W102)`                | `#~ hide the E301`                |
+
+Cada linha `#~` esconde um único aviso; para esconder vários, escreva uma linha para cada. `#~` dentro de um texto (`"#~ ..."`, `r"#~ ..."`, `""" ... """`) ou de um comentário de bloco não é uma instrução. Como todo aviso, `InvalidDirective` e `UnknownMention` também podem ser escondidos por um `#~ hide` anterior.
+
 ### Sequências de Escape
 
-Sequências iniciadas por `\` representam caracteres ou comportamentos especiais dentro de um literal de string. Fora de uma string, o caractere `\` é sempre um erro de sintaxe — sequências de escape só têm efeito **dentro** de um literal de string.
+Sequências iniciadas por `\` representam caracteres ou comportamentos especiais dentro de um literal de string. Fora de uma string, o caractere `\` é sempre um erro de sintaxe — sequências de escape só têm efeito **dentro** de um literal de string. A única exceção é o delimitador de restrição de um tipo refinado, `tipo\restrição\` (Capítulo 6.9): ali a barra invertida vem logo depois do nome do tipo, abre a restrição e é fechada pela próxima barra invertida fora de uma string. Por isso uma restrição não pode conter outra restrição dentro de si.
 
 #### Controle de Linha
 

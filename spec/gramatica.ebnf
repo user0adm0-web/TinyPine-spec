@@ -43,3 +43,15 @@ Arg             = NamedArg | PositionalArg ;
 NamedArg        = ( STRING | NUMBER ) ":" Expr
                 | IDENT "=" Expr ;
 PositionalArg   = Expr ;
+
+(* tipos (Capítulos 6.8 e 6.9) — provisório, ver Apêndice A.2 (B27, B29) *)
+Type            = TypeAtom { "|" TypeAtom } ;
+TypeAtom        = TypeName [ Refinement ] ;
+Refinement      = "\" Restriction { "," Restriction } "\" ;
+Restriction     = Expr [ ":" ( SimpleType | ConvType ) ] ;
+SimpleType      = TypeName { "|" TypeName } ;
+ConvType        = "to-" TypeName ;
+(* TypeName: os tipos do Capítulo 6, mais function; nenhum tipo usa "<" ">" *)
+(* TypeName refinável nesta versão: int, float, decim, num, str, list, dict, tuple *)
+(* uma Restriction não contém outra (Capítulo 3.2): SimpleType nunca leva Refinement *)
+(* dentro de Restriction valem as propriedades value, length, keys, values, "key" Expr e "value" Expr *)
