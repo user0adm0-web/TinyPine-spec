@@ -178,7 +178,7 @@ Um **tipo refinado** restringe os valores aceitos por um tipo por meio de uma ex
 "Aaa": str\length == 3\
 [1, 2, 3]: list\values: int, value 2 < 3, key 0==1\
 {1: ""}: dict\key "a"==1 or key 1==""\
-[1, 0]: list\key 0: to-str\                                   # ["1", 0]
+[1, 0]: list\key 0: int\                                       # asserção: válido (nada é convertido)
 var G: dict\length>1, 1==1, key "a": str\ = {"a": "1", "b": "2"}
 {"a": 1}: dict\keys: str, values: int | str\
 ```
@@ -206,11 +206,13 @@ Dentro da restrição, as propriedades se referem ao próprio valor que está se
 
 1. A restrição é avaliada sobre o valor que está sendo validado.
 
-2. Quando houver conversão explícita, a restrição é avaliada **depois** da conversão.
+2. Quando o valor vem de uma conversão explícita (`x: to-int: int\...\`), a restrição é avaliada **depois** dela.
 
 3. Se a condição for falsa, a operação produz `RefinementViolation PROBLEM` (E316).
 
 4. Tipos fora da lista acima não aceitam tipos refinados nesta versão.
+
+5. Dentro da restrição, `null` conta como verdadeiro: só um `false` de verdade reprova o valor. Qualquer outro resultado que não seja `bool` nem `null` é `TypeMismatch PROBLEM` (E302).
 
 ```tinypine
 200: int\value < 100\        # RefinementViolation PROBLEM — 200 não é menor que 100
@@ -228,6 +230,6 @@ var G: dict\length>1, 1==1, key "a": str\ = {"a": "1", "b": "2"}
 # 3ª condição: o valor da chave "a" é do tipo str
 ```
 
-Dentro da restrição, `:` seguido de um tipo — ou de uma união `T1 | T2`, Cap. 6.8.1 — faz uma asserção sobre aquela parte do valor (`key "a": str`, `values: int | str`), e `:` seguido de `to-tipo` faz uma conversão explícita (Cap. 8) sobre ela — `[1, 0]: list\key 0: to-str\` termina com a lista `["1", 0]`.
+Dentro da restrição, `:` seguido de um tipo — ou de uma união `T1 | T2`, Cap. 6.8.1 — faz uma asserção sobre aquela parte do valor (`key "a": str`, `values: int | str`), . **Conversão (`: to-tipo`) não é aceita dentro da restrição:** ela só valida o valor, nunca o transforma, então `int\0: to-bool\` e `list\value 2: to-str\` são `ConversionInRefinement PROBLEM` (E124), erro sintático que aborta o programa antes de rodar. Para validar o tipo de uma parte use a asserção (`key 0: str`); para converter, converta o valor antes (`var x = v: to-str`).
 
-> ***Nota:*** *os pontos em aberto deste recurso — semântica de* `value V` *e de* `values`*, chave ausente dentro de uma restrição, conversão dentro da restrição, uso em parâmetros e retornos de função, e a mensagem de erro para tipos que não aceitam refinamento — estão registrados no Apêndice A.2 (B27); os da tipagem estruturada, da união `|` e de* `function` *estão em B29.*
+> ***Nota:*** *os pontos em aberto deste recurso — semântica de* `value V` *e de* `values`*, chave ausente dentro de uma restrição, uso em parâmetros e retornos de função, e a mensagem de erro para tipos que não aceitam refinamento — estão registrados no Apêndice A.2 (B27); os da tipagem estruturada, da união `|` e de* `function` *estão em B29.*

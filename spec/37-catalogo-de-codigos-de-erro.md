@@ -36,3 +36,4 @@ Como regra geral, um token que reutiliza um símbolo, palavra reservada, variáv
 | `LoadFileNotFound (E314) PROBLEM`            | Execução           | load apontou para um arquivo inexistente ou ilegível (Capítulo 29.5).                                         |
 | `CircularLoad (E315) PROBLEM`                | Execução           | Dois ou mais arquivos se carregam mutuamente por load (Capítulo 29.5).                                        |
 | `RefinementViolation (E316) PROBLEM`         | Execução           | Valor que não satisfaz a restrição de um tipo refinado (Capítulo 6.9).                                        |
+| `ConversionInRefinement (E124) PROBLEM`      | Sintático          | Conversão (`: to-tipo`) escrita dentro da restrição de um tipo refinado (Capítulo 6.9).                       |

@@ -27,10 +27,10 @@ print("a", "b", "c", "sep":", ")
 # → a, b, c
  
 print("carregando", "last":"")
-print("...", “last”:"\n")
+print("...", "last":"\n")
 # → carregando... (as duas chamadas continuam na mesma linha)
  
-print("a", "b", “last”:"!\n", “sep”:"-")
+print("a", "b", "last":"!\n", "sep":"-")
 # → a-b! (ordem entre os nomeados não importa)
 
 f Teste("out":e, "end":k, "fun":y)
@@ -51,11 +51,11 @@ print("a", "b", last="!\n", sep="-")   # → a-b!
 
 > ***Nota:** a sintaxe* `nome:valor` *sem aspas, em argumento de chamada, só é reconhecida nos parsers de* `print`*,* `println` *e* `readln` *(Capítulo 21). Uma função definida pelo usuário recebe argumentos nomeados pela forma com aspas,* `"nome": valor`*, ou — quando o nome externo é uma string que forma um identificador válido — por* `nome=valor` *(Capítulo 30.3), correspondentes a um parâmetro declarado com identificador externo entre aspas (*`"nome": param`*) — ver Capítulos 30.3 e 30.8, um mecanismo distinto, com sintaxe própria. Chamar uma função de usuário com* `nome:valor` *sem aspas é erro de sintaxe. ( REMOVIDO ) ATUAL: todo argumento não importa qual função o recebe, tem que estar “nome”: valor OU nome=valor ( caso nome seja um string ná declaração dos parâmetros )*
 
-Strings suportam interpolação de variáveis, delimitada por `{` e `}`:
+Strings formatadas ( format "" ) suportam interpolação de variáveis, delimitada por `{` e `}`:
 
 ```tinypine
 var A = "Top"
-print("você é muito {A} e eu não gosto de \'\{\}\' ")
+print(format "você é muito {A} e eu não gosto de \'\{\}\' ")
 # → você é muito Top e eu não gosto de '{}'
 ```
 

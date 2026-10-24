@@ -13,7 +13,7 @@ Por padrão, uma variável é local ao escopo do bloco em que é declarada. O pr
 
 ### Imutabilidade — var e const
 
-`const` substitui `var` na declaração para impedir tanto a reatribuição do identificador quanto a mutação do conteúdo por ele referenciado — a partir da 0.5, `const` é imutabilidade total, não apenas da referência (ver Capítulo 19.5 para coleções). A regra de escopo (local/global) se combina livremente com a de mutabilidade:
+`const` substitui `var` na declaração para impedir a reatribuição do identificador — não apenas da referência (ver Capítulo 19.5 para coleções). A regra de escopo (local/global) se combina livremente com a de mutabilidade:
 
 | **Forma**       | **Sintaxe**    |
 |-----------------|----------------|

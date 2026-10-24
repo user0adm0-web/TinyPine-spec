@@ -86,7 +86,7 @@ As decisões marcadas **Aceita** foram confirmadas pelo autor do projeto; as dem
 
 - **Chave ausente dentro de uma restrição.** Em `{1: ""}: dict\key "a"==1 or key 1==""\` a chave `"a"` não existe: dá `KeyNotFound PROBLEM` (Cap. 19.3) ou a condição é simplesmente falsa?
 
-- **Conversão dentro da restrição.** `[1, 0]: list\key 0: to-str\` termina com `["1", 0]`, ou seja, a restrição altera o valor; a regra 2 diz que a restrição é avaliada depois da conversão. Falta dizer qual das duas formas de conversão vale quando se combinam.
+- **Conversão dentro da restrição.** *Resolvido na 0.5 do interpretador:* conversão (`: to-tipo`) não é aceita dentro de uma restrição — é `ConversionInRefinement PROBLEM` (E124); a restrição só valida (Cap. 6.9, regra 5 para `null`).
 
 - **Onde se aplica.** Os exemplos mostram a asserção e a declaração de `var`; a gramática provisória permite o tipo refinado em qualquer posição de `Type` (parâmetro e retorno de função, Cap. 30.3 e 30.4), o que ainda não foi confirmado. Como combina com a tipagem estruturada (Cap. 6.8) está resolvido — `list<...>`/`dict<...>` foram substituídas por `keys:`/`values:` dentro do próprio tipo refinado —, e `.type` não é afetado (Cap. 6.7). Falta dizer o que o tipo refinado significa em parâmetro e retorno.
 
@@ -155,6 +155,8 @@ Mudanças de comportamento ou de sintaxe já confirmadas pelo autor do projeto, 
 - **Acesso explícito** `colecao[key K]` **e** `colecao[value V]` **(Cap. 19.2) — substituem** `key, N`**,** `value, N` **e** `key:N`**/**`value:N`**; em lista e tupla a chave é o índice, então** `A[key 0]` **é o primeiro elemento. A mensagem** `TypeMismatch` **"Lists have no keys" (Cap. 36.7) foi removida. Pontos em aberto em B27.**
 
 - **Interpolação** `{ }` **aceita expressões e propriedades (Cap. 20.2) —** `format "{A-A}"` **e** `format "{A.length}"` **são válidos; resultado em aberto (B28).**
+
+- **Conversão em restrição proibida; `null` conta como verdadeiro (Cap. 6.9, 37) —** `x: to-tipo` dentro de `tipo\...\` virou erro sintático `ConversionInRefinement` (E124). Antes o interpretador tratava qualquer conversão na restrição como condição sempre verdadeira, e `int\0: to-bool\ = -1` criava a variável mesmo com a condição falsa. Dentro da restrição, `null` passa a valer como verdadeiro; só `false` reprova (E316).
 
 ### Corrigido
 
