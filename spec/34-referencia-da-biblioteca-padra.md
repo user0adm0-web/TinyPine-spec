@@ -28,20 +28,20 @@ Dos módulos listados acima, apenas `math`, `pen`, `random`, `os` e `computer` t
 
 O módulo `math` é responsável por operações aritméticas avançadas, funções trigonométricas e manipulações numéricas que vão além dos operadores básicos da linguagem (Capítulo 13). A lista abaixo reúne as funções já normativas (com assinatura, descrição e exemplo completos); o conjunto pode ser estendido em revisões futuras.
 
-| **Função**                                             | **Descrição**                                        | **Exemplo**                                     |
-|--------------------------------------------------------|------------------------------------------------------|-------------------------------------------------|
-| `math.abs(num)`                                        | Retorna o valor absoluto de um número.               | `math.abs(-5)` → `5`                            |
-| `math.ceil(num)`                                       | Arredonda um número para cima (teto).                | `math.ceil(4.2)` → `5`                          |
-| `math.floor(num)`                                      | Arredonda um número para baixo (piso).               | `math.floor(4.8)` → `4`                         |
-| `math.pow(base, exp)`                                  | Eleva a base ao expoente fornecido.                  | `math.pow(2, 3)` → `8`                          |
-| `math.sqrt(num)`                                       | Retorna a raiz quadrada do número.                   | `math.sqrt(16)` → `4`                           |
-| `math.sin(rad)`                                        | Retorna o seno do ângulo informado, em radianos.     | `math.sin(1.5707963267948966)` → `1.0`          |
-| `math.cos(rad)`                                        | Retorna o cosseno do ângulo informado, em radianos.  | `math.cos(0)` → `1.0`                           |
-| `math.tan(rad)`                                        | Retorna a tangente do ângulo informado, em radianos. | `math.tan(0.7853981633974483)` → `1.0`          |
-| `math.asin(num)` / `math.acos(num)` / `math.atan(num)` | Funções trigonométricas inversas.                    | `math.asin(0.5)` → `0.5235987755982989` (30°)   |
-| `math.atan2(y, x)`                                     | Retorna o arco-tangente de dois argumentos.          | `math.atan2(1, 1)` → `0.7853981633974483` (45°) |
-| `math.radians(graus)`                                  | Converte graus para radianos.                        | `math.radians(180)` → `3.141592653589793`       |
-| `math.degrees(rad)`                                    | Converte radianos para graus.                        | `math.degrees(3.141592653589793)` → `180.0`     |
+| **Função**                                                                     | **Descrição**                                        | **Exemplo**                                     |
+|--------------------------------------------------------------------------------|------------------------------------------------------|-------------------------------------------------|
+| `math.abs(int | decim)`                                                        | Retorna o valor absoluto de um número.               | `math.abs(-5)` → `5`                            |
+| `math.ceil(int | decim)`                                                       | Arredonda um número para cima (teto).                | `math.ceil(4.2)` → `5`                          |
+| `math.floor(int | decim)`                                                      | Arredonda um número para baixo (piso).               | `math.floor(4.8)` → `4`                         |
+| `math.pow(base, exp)`                                                          | Eleva a base ao expoente fornecido.                  | `math.pow(2, 3)` → `8`                          |
+| `math.sqrt(int | decim)`                                                       | Retorna a raiz quadrada do número.                   | `math.sqrt(16)` → `4`                           |
+| `math.sin(rad)`                                                                | Retorna o seno do ângulo informado, em radianos.     | `math.sin(1.5707963267948966)` → `1.0`          |
+| `math.cos(rad)`                                                                | Retorna o cosseno do ângulo informado, em radianos.  | `math.cos(0)` → `1.0`                           |
+| `math.tan(rad)`                                                                | Retorna a tangente do ângulo informado, em radianos. | `math.tan(0.7853981633974483)` → `1.0`          |
+| `math.asin(int | decim)` / `math.acos(int | decim)` / `math.atan(int | decim)` | Funções trigonométricas inversas.                    | `math.asin(0.5)` → `0.5235987755982989` (30°)   |
+| `math.atan2(y, x)`                                                             | Retorna o arco-tangente de dois argumentos.          | `math.atan2(1, 1)` → `0.7853981633974483` (45°) |
+| `math.radians(graus)`                                                          | Converte graus para radianos.                        | `math.radians(180)` → `3.141592653589793`       |
+| `math.degrees(rad)`                                                            | Converte radianos para graus.                        | `math.degrees(3.141592653589793)` → `180.0`     |
 
 **Constantes globais:**
 

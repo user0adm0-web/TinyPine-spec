@@ -15,6 +15,8 @@ case estadoTerminal
     print("Terminal offline.")
 ```
 
+> ***Nota (sexta revisão pós-0.7):*** *o* `is` *de um braço é o operador* `is` *(Capítulo 11.1), agora **identidade**: o valor do `case` e o do braço precisam ser o mesmo objeto. Para escalares isso é "mesmo tipo e mesmo valor" (`is "seguranca"` e `is 1` acima funcionam); para coleções, só o mesmo objeto. Para comparar por valor (por exemplo `5` com `5.0`) use `== valor` no braço — ver B30 no Apêndice A.2.*
+
 ### Aninhamento Estrutural (Filtragem em Cascata)
 
 Quando um bloco `case` é inserido dentro de um escopo `match`, o interpretador altera o contexto de avaliação para a nova expressão fornecida, permitindo validações compostas sem poluição visual adicional.

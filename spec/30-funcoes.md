@@ -98,7 +98,7 @@ f GH("A": e)
 
 GH(10)          # e = 10 — por posição
 GH("A": 10)     # e = 10 — por nome
-GH()            # e: void, com ImplicitVoid WARNING (Capítulo 7.2)
+GH()            # MissingArgument PROBLEM
 ```
 
 O nome externo (`"A"` acima) é usado na chamada; o identificador interno (`e`) é o nome da variável dentro do corpo da função. Os dois são independentes: o nome externo é um literal — string ou numérico — e não precisa ter relação com o identificador interno. Essa forma é distinta de `nome:valor` sem aspas (Cap. 20.1), reservado a `print`, `println` e `readln`.
@@ -427,7 +427,7 @@ GJ(10)                      # posicional
 f GH("A": e)
   print(e)
 
-GH()                        # e: void, com ImplicitVoid WARNING
+GH()                        # MissingArgument PROBLEM
 GH("A": 10)                 # nomeado opcional, por nome
 
 f GG(!, "A": e)

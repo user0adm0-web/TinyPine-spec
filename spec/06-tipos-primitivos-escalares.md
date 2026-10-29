@@ -14,13 +14,13 @@ false: str                # TypeMismatch PROBLEM
 
 ### num — Numérico Genérico
 
-O tipo num é a raiz do sistema numérico do TinyPine. Ele atua como um supertipo genérico, aceitando livremente valores do tipo int, float ou decim. É o tipo padrão inferido pelo compilador quando uma variável numérica é declarada sem uma asserção rígida específica, e serve como o tipo de retorno padrão para operações aritméticas mistas. Embora seja flexível entre números, ele mantém a segurança estática e rejeita qualquer tipo não numérico.
+O tipo num é a raiz do sistema numérico do TinyPine. Ele atua como um supertipo genérico, aceitando livremente valores do tipo int e decim (  float apenas se explicito ). É o tipo padrão inferido pelo compilador quando uma variável numérica é declarada sem uma asserção rígida específica, e serve como o tipo de retorno padrão para operações aritméticas mistas. Embora seja flexível entre números, ele mantém a segurança estática e rejeita qualquer tipo não numérico.
 
 `var idade: num = 20 # OK — Aceita int `
 
-`var preco: num = 15.70 # OK — Aceita float/decim `
+`var preco: num = 15.70 # OK — Aceita decim `
 
-`var pi: num = 3.14159 # OK — Aceita float/decim `
+`var pi: num = 3.14159 # OK — Aceita decim `
 
 `var altura: num = "1.90" # StaticTypeMismatch PROBLEM — String não é num e não há coerção implícita `
 

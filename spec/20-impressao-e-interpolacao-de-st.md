@@ -72,3 +72,55 @@ format "{A.length}"   # válido
 ```
 
 > ***Nota:*** *o resultado de cada um desses dois exemplos (a interação do* `-` *com a regra do Capítulo 3.4.1 e o* `.length` *de um número) ainda não está definido — Apêndice A.2, B28.*
+
+### Curingas e caracteres Unicode com [ ]
+
+Dentro de um `format`, os colchetes abrem um **grupo**. Há dois tipos de grupo, e **nada mais** é aceito entre `[` e `]`:
+
+| **Grupo**                        | **O que é**                                                                                                         | **Exemplo**                      |
+|----------------------------------|---------------------------------------------------------------------------------------------------------------------|----------------------------------|
+| `[*]` · `[N*]` · `[*M]` · `[N*M]` | **curinga**: casa de `N` até `M` caracteres quaisquer. `N` omitido vale 0; `M` omitido significa sem limite.        | `format "ar[*]"`                 |
+| `[u+H]`                          | **Unicode**: o caractere de ponto de código `H`, escrito em **hexadecimal**, como na notação `U+2222`.             | `format "[u+2222]"` → `∢`        |
+
+```ebnf
+Group     = "[" ( Wildcard | Unicode ) "]" ;
+Wildcard  = [ Bound ] "*" [ Bound ] ;
+Unicode   = "u+" ( HEXDIGIT { HEXDIGIT } | "{" Expr "}" ) ;
+Bound     = INTEGER | "{" Expr "}" ;
+HEXDIGIT  = "0"…"9" | "a"…"f" | "A"…"F" ;
+```
+
+**Curinga.** `[*]` casa zero ou mais caracteres; `[2*]`, pelo menos 2; `[*4]`, de 0 a 4; `[2*4]`, de 2 a 4; `[3*3]`, exatamente 3 (e `[1*1]` é exatamente 1, o antigo `\*`). Um caractere é qualquer caractere, inclusive `\n`; maiúsculas e minúsculas são diferentes. Um `format` com pelo menos um curinga produz um **padrão**, que `==`, `!=`, `.match()` e `~=` casam com a outra string (Capítulo 11.2):
+
+```tinypine
+format "ar[*]" == "arroz"      # true
+format "[*]a[*]" == "a"        # true  — os dois grupos casam zero caracteres
+format "a[*4]" == "arroz"      # true  — "rroz" são 4 caracteres
+format "a[*3]" == "arroz"      # false — "rroz" são 4 e o máximo é 3
+format "a[2*]" == "ab"         # false — o mínimo é 2 caracteres depois do "a"
+```
+
+**Unicode.** `[u+H]` vira o caractere do ponto de código `H`, escrito em **hexadecimal** (de 1 a 6 dígitos `0-9`, `a-f`, `A-F`, maiúsculas ou minúsculas; zeros à esquerda são aceitos): `[u+2222]` é `∢` (U+2222, *Spherical Angle*) e `[u+E9]` é `é`. Os limites do curinga (`N`, `M`), ao contrário, são inteiros **decimais** comuns. Um `format` que só tem grupos Unicode (e nenhum curinga) é uma `str` comum, não um padrão:
+
+```tinypine
+format "[u+2222]"     # → ∢
+format "caf[u+E9]"    # → café
+format "caf[u+e9]"    # → café (maiúsculas e minúsculas dos dígitos são iguais)
+
+var C = 8738          # 8738 é 2222 em hexadecimal
+format "[u+{C}]"      # → ∢  — entre { } vai um int: o próprio número do ponto de código
+```
+
+**Variáveis nos grupos.** Os colchetes **sozinhos não abrem variáveis**: `[B]` não é a variável `B` — é um grupo inválido. Para usar um valor, escreva-o entre chaves, como em qualquer parte do `format`: `[{B}*{A}]`, `[{B}*]`, `[u+{C}]`. A expressão entre chaves precisa ser um `int`; em `[u+{C}]` o `int` é o **número** do ponto de código (um `int` não carrega "base": `8738` e o literal `[u+2222]` são o mesmo caractere).
+
+```tinypine
+var A = 4
+var B = 2
+format "a[{B}*{A}]" == "arroz"   # true — de 2 a 4 caracteres depois do "a"
+```
+
+**Erros.** `InvalidPatternGroup PROBLEM` (E125) quando: o grupo tem outra coisa que não curinga ou `u+H` (`[]`, `[abc]`, `[B]`, `[u+]`, `[u+xyz]`); `N` ou `M` não são inteiros não negativos; `N` > `M`; o ponto de código está fora de `0` a `10FFFF` (hexadecimal) ou é um substituto (`D800` a `DFFF`). Com números escritos no próprio grupo o erro é detectado antes da execução; com `{ }`, quando o `format` é avaliado (recuperável com `try`).
+
+**Colchetes literais.** Para um `[` ou `]` comum num `format`, escreva `\[` e `\]` (Capítulo 3.2.2) — como já se faz com `\{` e `\}`. Os colchetes **dentro** de `{ }` pertencem à expressão (`format "{lista[0]}"`) e não abrem grupo. Numa string **comum** (sem `format`), `[` e `]` são caracteres como outros. *Mudança:* um `format` que já tinha `[` ou `]` literais agora precisa do escape.
+
+> ***Nota:*** *o que `print(format "ar[*]")` imprime, o que acontece com um padrão depois de concatenado ou fatiado, e o `.type` de um padrão ainda não estão definidos — Apêndice A.2, B32.*

@@ -105,19 +105,20 @@ Sequências iniciadas por `\` representam caracteres ou comportamentos especiais
 | `\\`          | Barra invertida literal. | `print("\\\\")`      | `\`       |
 | `\"`          | Aspa dupla literal.      | `print("\\"Olá\\"")` | `"Olá"`   |
 
-Os seguintes caracteres podem ser escapados para uso literal dentro de uma string: `\`, `"`, `'`, `{` e `}`. A presença da barra invertida remove qualquer significado especial do caractere imediatamente seguinte.
+Os seguintes caracteres podem ser escapados para uso literal dentro de uma string: `\`, `"`, `'`, `{`, `}`, `[` e `]`. A presença da barra invertida remove qualquer significado especial do caractere imediatamente seguinte. `{ }` e `[ ]` só têm significado dentro de um `format` (Capítulo 20): em uma string comum, `\[` produz `[` do mesmo jeito que `[` sozinho.
 
-#### Correspondência por Padrão — \\
+#### Correspondência por Padrão
 
-A sequência `\*`, usada dentro de um literal de string comparado por meio de `.match()` ou do operador `~=` (ver 11.2), representa **exatamente um caractere arbitrário** — não uma sequência de zero ou mais caracteres. É um curinga posicional de largura fixa, não um curinga de repetição.
+A correspondência por padrão não é mais uma sequência de escape: o curinga foi para dentro do `format`, como o grupo `[*]` (Capítulo 20.3), e o casamento está descrito no Capítulo 11.2. A antiga sequência `\*` (exatamente um caractere arbitrário) **não existe mais**: escrevê-la é `DeprecatedSyntax PROBLEM` (E118), com a dica de usar `[1*1]` num `format`.
 
 ```tinypine
-"casa" ~= "c\*sa"              # true
-"teste" ~= "t\*"               # false
-"top" ~= "t\*f"                # false
+"casa" ~= format "c[1*1]sa"     # true
+"teste" ~= format "t[1*1]"      # false
+"top" ~= format "t[1*1]f"       # false
+"casa" ~= "c[1*1]sa"            # false — string comum: igualdade literal
 ```
 
-Nota: a partir da 0.5, `==` realiza sempre igualdade literal pura — `\*` deixa de ter qualquer efeito de curinga dentro dele (ver 11.2).
+Nota: desde a 0.5, `==` é igualdade literal pura para strings comuns; só um padrão (um `format` com curinga) casa (ver 11.2).
 
 ### Erros Léxicos
 
@@ -125,7 +126,7 @@ O analisador léxico interrompe imediatamente a leitura ao encontrar uma das con
 
 | **Caso**                                                                       | **Comportamento formal**                                                                                                                                                                                                                 |
 |--------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Caractere inválido (ex.: `@`)                                                  | `ParserError PROBLEM` — Unexpected character `'@'`. O lexer interrompe imediatamente a leitura.                                                                                                                                          |
+| Caractere inválido (ex.: `¬`)                                                  | `ParserError PROBLEM` — Unexpected character `'¬'`. O lexer interrompe imediatamente a leitura.                                                                                                                                          |
 | String não fechada                                                             | `ParserError PROBLEM` — Unterminated string: the closing quote is missing. Detectado quando o lexer atinge o fim da linha ou o fim do arquivo sem encontrar o fechamento das aspas.                                                      |
 | Número malformado (ex.: `12.5.7`)                                              | `ParserError PROBLEM` — Malformed number `'12.5.7'`. Múltiplos pontos decimais no mesmo literal numérico são inválidos.                                                                                                                  |
 | Indentação mista (TAB e espaço no mesmo escopo)                                | `MixedIndentation PROBLEM` — Mixed TABs and spaces in the indentation of the same scope. Detectado quando uma linha usa TAB onde o escopo já havia fixado espaço como unidade, ou vice-versa (Capítulo 4.3).                             |
@@ -147,7 +148,7 @@ Permitido:
 
 - **o símbolo** `$` **— só no início do nome e no fim do nome. ( apenas variáveis )**
 
-Proibido — qualquer outro símbolo, incluindo (mas não só): `& + * ´ \` ' " \# % ( ) \[ \] { } ; : \\ / , = ç ~ ? @ .\` ´
+Proibido — qualquer outro símbolo, incluindo (mas não só): `& + * ´ \` ' " \# % ( ) \[ \] { } ; : \\ / , = ç ~ ? .\` ´
 
 Também são inválidos: acentos, ç, e qualquer emoji (inclusive variantes de um mesmo emoji, como ♡/♻) — nenhum caractere fora de a–z/A–Z/0–9/`-`/`_` é aceito, então isso já decorre da regra acima; fica dito aqui de forma explícita para não deixar dúvida.
 

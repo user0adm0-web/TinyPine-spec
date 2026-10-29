@@ -5,9 +5,9 @@ Como regra geral, um token que reutiliza um símbolo, palavra reservada, variáv
 | **Código**                                   | **Fase**           | **Descrição**                                                                                                 |
 |----------------------------------------------|--------------------|---------------------------------------------------------------------------------------------------------------|
 | `ParserError (E101) PROBLEM`                 | Léxico / Sintático | Token inesperado, string não fechada, número malformado, caractere inválido.                                  |
-| `IdNotFound (E308) PROBLEM`                  | Execução           | Variável ou função referenciada sem estar declarada.                                                          |
-| `IdDuplicate (E110) PROBLEM`                 | Sintático          | Identificador declarado mais de uma vez no mesmo programa.                                                    |
-| `MultipleIdentifiersPerBlock (E109) PROBLEM` | Sintático          | Mais de um `id()` registrado no mesmo bloco lógico.                                                           |
+| `IdNotFound (E308) PROBLEM`                  | Sintático / Execução | Variável, função ou classe referenciada sem estar declarada.                                                          |
+| `IdDuplicate (E110) PROBLEM`                 | Sintático          | Identificador declarado mais de uma vez no mesmo programa, ou nome de um `id` reutilizado por outro criador. Vale para `id nome` e para `load ... as`.                                                    |
+| `CircularIdReference (E202) PROBLEM`         | Sintático          | Identificador que referencia a si mesmo, direta ou indiretamente, pelo nome.                                |
 | `ScopeUnderflow (E901) PROBLEM`              | Execução           | `end N` tentou fechar mais blocos do que os existentes e abertos.                                             |
 | `InvalidEndCount (E902) PROBLEM`             | Execução           | `end()` recebeu um valor negativo.                                                                            |
 | `InvalidRepeatCount (E306) PROBLEM`          | Execução           | `repeat` recebeu um valor negativo ou não inteiro.                                                            |
@@ -37,3 +37,5 @@ Como regra geral, um token que reutiliza um símbolo, palavra reservada, variáv
 | `CircularLoad (E315) PROBLEM`                | Execução           | Dois ou mais arquivos se carregam mutuamente por load (Capítulo 29.5).                                        |
 | `RefinementViolation (E316) PROBLEM`         | Execução           | Valor que não satisfaz a restrição de um tipo refinado (Capítulo 6.9).                                        |
 | `ConversionInRefinement (E124) PROBLEM`      | Sintático          | Conversão (`: to-tipo`) escrita dentro da restrição de um tipo refinado (Capítulo 6.9).                       |
+| `DeprecatedSyntax (E118) PROBLEM`            | Léxico / Sintático | Sintaxe removida: `id "nome"`, `id("nome")`, `@nome` e `\*` (Capítulos 3.2.3, 11.2 e 28).                       |
+| `InvalidPatternGroup (E125) PROBLEM`         | Sintático / Execução | Grupo `[ ]` inválido num `format`, ou limites/ponto de código inválidos (Capítulo 20.3).                    |

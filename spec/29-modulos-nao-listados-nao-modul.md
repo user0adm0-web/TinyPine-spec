@@ -123,7 +123,7 @@ Y.saudar("Dhavi")           # uma função declarada em util.tpine
 >
 > **4. O que** `Y` **expõe.** As variáveis, funções e classes declaradas no nível de topo do arquivo carregado, mais o `~Program` dele (`Y.~Program`); nada de dentro de blocos. Atribuir a um membro de fora (`Y.A = 5`) segue as regras do Capítulo 18.2: permitido para `var`; para `const`, reatribuir é `ConstReassignment PROBLEM`. `Y.Z` inexistente é `IdNotFound PROBLEM`, e `.~Program` aplicado a algo que não é apelido de `load` também. `Y.type` é `"module"`.
 >
-> **5. Apelido.** O apelido é registrado como identificador na etapa de Registro de IDs (Capítulo 35, etapa 5); um apelido que repete outro identificador do mesmo escopo é `IdDuplicate PROBLEM`.
+> **5. Apelido.** O apelido é registrado como identificador na etapa de Registro de IDs (Capítulo 35, etapa 5); um apelido que repete outro identificador do mesmo escopo, ou o nome de um `id` (Capítulo 28), é `IdDuplicate PROBLEM`.
 >
 > **6. Erros.** Arquivo inexistente ou ilegível: `LoadFileNotFound PROBLEM` (recuperável com `try`). Erro dentro do arquivo carregado: propaga como qualquer erro, com o nome do arquivo carregado no trecho de código e na pilha (Capítulo 36.7). Carga circular — A carrega B, que carrega A: `CircularLoad PROBLEM`.
 >
