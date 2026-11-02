@@ -20,9 +20,10 @@ Cada módulo tem um papel definido dentro da biblioteca padrão do TinyPine:
 | `scene`     | Renderização 3D (dinâmica).                                                      |
 | `input`     | Descontinuado                                                                    |
 | `web`       | Funcionalidades relacionadas à web.                                              |
+| `canvas`    | Janelas, árvore de elementos, estilo no formato do CSS e laço de eventos (Parte X, Capítulos 43 a 53). |
 | `clipboard` | Descontinuado — funcionalidade absorvida por `computer.clipboard (34.7)`.        |
 
-Dos módulos listados acima, apenas `math`, `pen`, `random`, `os` e `computer` têm suas funções, parâmetros e comportamento de erro detalhados nesta especificação (34.2 a 34.4, 34.6 e 34.7); os demais (`system`, `time`, `json`, `scene`, `web`, `clipboard`) são, por ora, anunciados apenas por esta tabela de visão geral (ver Histórico, Apêndice A — pendência de alta prioridade).
+Dos módulos listados acima, apenas `math`, `pen`, `random`, `os` e `computer` têm suas funções, parâmetros e comportamento de erro detalhados neste capítulo (34.2 a 34.4, 34.6 e 34.7), e o `canvas` tem a Parte X inteira (Capítulos 43 a 53); os demais (`system`, `time`, `json`, `scene`, `web`, `clipboard`) são, por ora, anunciados apenas por esta tabela de visão geral (ver Histórico, Apêndice A — pendência de alta prioridade).
 
 ### Módulo math
 

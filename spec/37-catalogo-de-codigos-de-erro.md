@@ -32,10 +32,11 @@ Como regra geral, um token que reutiliza um símbolo, palavra reservada, variáv
 | `InvalidVariadicParam (E112) PROBLEM`        | Sintático          | Uso inválido de `package args` na declaração de função.                                                       |
 | `InvalidQuestionMarker (E123) PROBLEM`       | Sintático          | Uso inválido do marcador `?` na declaração de função (Capítulo 30.4.1).                                       |
 | `ReservedSymbol (E113) PROBLEM`              | Sintático          | Uso de ~ para declarar variável ou função, ou de um objeto nativo desconhecido (~Nome diferente de ~Program). |
-| `ReadOnlyProperty (E313) PROBLEM`            | Execução           | Atribuição a ~Program ou a um de seus membros (Capítulo 29.4).                                                |
+| `ReadOnlyProperty (E313) PROBLEM`            | Execução           | Atribuição a ~Program ou a um de seus membros (Capítulo 29.4), ou a membro somente leitura de um objeto nativo (Capítulos 14 e 45).                                                |
 | `LoadFileNotFound (E314) PROBLEM`            | Execução           | load apontou para um arquivo inexistente ou ilegível (Capítulo 29.5).                                         |
 | `CircularLoad (E315) PROBLEM`                | Execução           | Dois ou mais arquivos se carregam mutuamente por load (Capítulo 29.5).                                        |
 | `RefinementViolation (E316) PROBLEM`         | Execução           | Valor que não satisfaz a restrição de um tipo refinado (Capítulo 6.9).                                        |
 | `ConversionInRefinement (E124) PROBLEM`      | Sintático          | Conversão (`: to-tipo`) escrita dentro da restrição de um tipo refinado (Capítulo 6.9).                       |
 | `DeprecatedSyntax (E118) PROBLEM`            | Léxico / Sintático | Sintaxe removida: `id "nome"`, `id("nome")`, `@nome` e `\*` (Capítulos 3.2.3, 11.2 e 28).                       |
 | `InvalidPatternGroup (E125) PROBLEM`         | Sintático / Execução | Grupo `[ ]` inválido num `format`, ou limites/ponto de código inválidos (Capítulo 20.3).                    |
+| `E701`–`E735` / `W701`–`W705` (módulo `canvas`) | Execução        | Erros e avisos de janela, elemento, estilo, evento e testes sem tela (Capítulo 53).                           |

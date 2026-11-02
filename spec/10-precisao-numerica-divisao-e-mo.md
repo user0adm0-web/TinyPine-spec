@@ -12,12 +12,28 @@ Quando dois valores numéricos são divididos sem modificador ou prefixo de tipo
 | `int / float`               | `float`                                               |
 | `float / int`               | `float`                                               |
 | `num / num`                 | `num`                                                 |
+| `str\|list\|dict / int`     | O resultado é o dividendo cortado pelo inteiro, caso não de para dividir ele retorna erro |
 | Operação envolvendo `decim` | `decim` (ou `float`, se o outro operando for `float`) |
 
 Se o resultado possuir casas decimais, o valor flutuante é preservado integralmente no tipo `num` — não há truncamento implícito na divisão padrão.
 
 ```tinypine
 var resultado = 10 / 100   # resultado armazena 'num' com valor 0.1
+```
+
+Exemplo de divisão de objetos não númericos.
+
+```tinypine
+[1, 2]/2 # [1], [2]
+[1, 2, 3, 4]/2 # [1, 2], [3, 4]
+[1, 2, 3, 4, 5, 6]/3 # [1, 2, 3], [4, 5, 6]
+
+{1: "one", 2: "two"}/2 # {1: "one"}, {2: "two"}
+
+"1234"/2 # "12", "34"
+
+"1234"/3 # erro
+"1234"/0 # erro
 ```
 
 ### Conversão Explícita para Inteiro — : to-int

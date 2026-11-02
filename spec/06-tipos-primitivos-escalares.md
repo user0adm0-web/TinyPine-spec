@@ -140,8 +140,6 @@ var F: dict\keys: str, values: function\ = {"log": f(package ARGS) print(unpack 
 
 Valores (e chaves) de tipos diferentes podem coexistir livremente na mesma coleção, desde que cada um pertença ao conjunto declarado — o mesmo princípio já vale para chaves `str` e numéricas misturadas (Cap. 19.1). Anotar parte da coleção não obriga o resto: sem `values:`, a lista continua heterogênea.
 
-**Tipos aninhados.** O tipo depois de `keys:`/`values:` é sempre um tipo simples ou uma união de tipos simples, sem restrição própria — a restrição é fechada pela próxima `\`, então não cabe uma restrição dentro da outra (Cap. 3.2). Por isso `values: dict` aceita qualquer dicionário, sem declarar a estrutura interna dele; a antiga `dict<str, dict<str, int>>` não tem equivalente nesta versão (Apêndice A.2, B29).
-
 **Quando é verificado.** Na declaração de `var`/`const`, no parâmetro e no tipo de retorno de função, `keys:` e `values:` são verificados **estaticamente** (Cap. 35, etapa 6), como a anotação `<...>` já era — `StaticTypeMismatch PROBLEM`. As demais condições, e a asserção direta sobre um valor (`[1, "a"]: list\values: int\`), são verificadas na execução: `RefinementViolation PROBLEM` (Cap. 6.9). Esta divisão está em aberto (B29).
 
 **Inferência automática:** quando nenhuma anotação é fornecida, o tipo de uma coleção é inferido a partir do seu conteúdo, seguindo o mesmo princípio de união:
