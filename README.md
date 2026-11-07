@@ -11,6 +11,7 @@ meta.yaml        título, subtítulo, versão e codinome
 tools/           build.py, check.py, run_examples.py, make_reference.py
 templates/       reference.docx (visual do Word) e style.css (visual do HTML)
 tests/exemplos/  exemplos executáveis (tinypine run + output)
+docs/            material de apoio fora da especificação (docs/canvas/: arquitetura, pesquisa e decisões do módulo canvas)
 dist/            saída gerada (não versionada)
 ```
 

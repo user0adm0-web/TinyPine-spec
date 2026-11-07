@@ -2,7 +2,7 @@
 
 ## Apêndice A — Histórico da Especificação
 
-Este apêndice é *informativo*: registra como a especificação chegou ao estado descrito nos capítulos 1–42 (normativos), mas não define, por si só, nenhuma regra da linguagem. Ele reúne, num único lugar cronológico e categorizado, tudo que em revisões anteriores deste documento aparecia espalhado — como notas dentro dos próprios capítulos técnicos — comparando o texto atual com versões anteriores. Essa separação segue a prática comum de manter um *cronologia de mudanças* (changelog) fora do corpo normativo: o leitor que só quer saber "como a linguagem se comporta hoje" lê os capítulos 1–42 sem interrupção; quem quer entender "por que ela chegou a esse comportamento" lê este apêndice.
+Este apêndice é *informativo*: registra como a especificação chegou ao estado descrito nos capítulos 1–53 (normativos), mas não define, por si só, nenhuma regra da linguagem. Ele reúne, num único lugar cronológico e categorizado, tudo que em revisões anteriores deste documento aparecia espalhado — como notas dentro dos próprios capítulos técnicos — comparando o texto atual com versões anteriores. Essa separação segue a prática comum de manter um *cronologia de mudanças* (changelog) fora do corpo normativo: o leitor que só quer saber "como a linguagem se comporta hoje" lê os capítulos 1–53 sem interrupção; quem quer entender "por que ela chegou a esse comportamento" lê este apêndice.
 
 Toda referência de capítulo abaixo aponta para o texto normativo correspondente, já com a decisão aplicada.
 
@@ -55,12 +55,36 @@ As decisões marcadas **Aceita** foram confirmadas pelo autor do projeto; as dem
 | B30    | Identidade `is` (Cap. 11.1): modelo de referência (atribuir não copia — antes não estava definido em lugar nenhum), escalares por tipo e valor, tuplas como objetos, sem forma negada (`is not`?), e o `is` dos braços de `case` (Cap. 25) — ver explicação logo abaixo da tabela | 11.1, 25     | Alta — mudança de significado de um operador existente. |
 | B31    | `id` como criador (Cap. 28): nome reservado no arquivo inteiro × escopos, posição do passo de expansão por tokens no pipeline (relacionada a B7), nome em `{ }` de `format` e em strings, nome externo `nome=valor`, e `id` depois de `.` — ver explicação logo abaixo | 28, 35       | Alta — a referência sem `@` obriga a coletar os `id` antes de analisar. |
 | B32    | Padrões em `format` (Cap. 20.3, 11.2): valor de um `format` com curinga, propagação por concatenação/fatia/`.type`/`print`, `[*]` (zero ou mais) × antigo `\*` (um), Unicode em hexadecimal, escape `\[ \]` | 20.3, 11.2   | Alta — recurso novo, decisão do autor ainda incompleta. |
+| B33    | Módulo `canvas` sem implementação nem execução (Cap. 43 a 53): o Sys não o implementa; os blocos com `output` são previsões; o `textinput` (Cap. 50) é uma hipótese que falta testar em teclados reais; a fonte embutida fixa do modo `headless` (Cap. 48 e 51) ainda não foi escolhida | 43–53        | Alta — nada do módulo foi executado. |
+| B34    | Caminhos relativos do canvas (Cap. 44) valem a partir do `.tpine` em execução, mas o `os.read` (34.6) não diz como resolve caminhos relativos | 34.6, 44, 47 | Média |
+| B35    | Da linguagem, evitados pelo canvas: literais multilinha/crus (`"""…"""`, `r"…"`, só citados no Cap. 3.1.1) e o formato de impressão de um `dict` | 3.1.1, 19, 47, 48 | Média |
+| B36    | Atribuição por membro em objetos nativos (nota no Cap. 14; classes do usuário sem definição), tecla `meta` ausente da tabela do 34.7, contradição Cap. 19.5 × 19.4.2 (`const` e conteúdo), atribuição de função anônima a variável de fora (31.3), aviso para `membro-membro` colado (3.4.1) | 14, 19, 31, 34.7, 45, 49 | Média |
+| B37    | Decisões do canvas que ficaram sem confirmação: leitura logo após gravar tamanho/posição de janela, `\n` gravado em `value` de um `input`, `w.close()` programático cancelável, janelas filhas/modais | 44, 45       | Baixa |
+| B38    | Fora desta versão do canvas: `surface` (desenho 2D, ligado a `pen`/`scene`), controles novos, barras de rolagem visíveis, `outline`/`transition`, diálogos, fonte de arquivo, escala de DPI por janela, pré-edição de IME e texto bidirecional | 43–50        | Baixa — fica para uma versão futura. |
+| B39    | `chan\values: T\` (Cap. 42.5): o tipo é verificado a cada envio, na execução (`RefinementViolation`, E316); falta decidir se o analisador estático também verifica quando o tipo do valor enviado é conhecido, e se um canal sem refinamento infere `values:` | 42.5, 6.9 | Média |
+| B40    | Objeto de erro de `AggregateError` (E812): `err.errors` pressupõe um objeto de erro com propriedades, e o Cap. 24 só diz que o erro é "normalmente uma string"; o bloco de erro do Cap. 36.7 para erros dentro de tarefas (pilha da tarefa × onde foi criada) | 42.10, 24, 36.7 | Alta |
+| B41    | Funções nativas **suspensíveis**: hoje `readln`, `os.read`, `os.write`, `os.copy`, `os.move` e `computer.shell`; `os.create`, `os.delete` e os módulos `web` e `time` (B2) ainda sem decisão | 42.14.4, 34 | Média |
+| B42    | Relógio virtual (`task.virtual`): threads usam sempre o tempo real, e o relógio de `canvas.advance` (Cap. 51) é independente do de `task` | 42.12, 51 | Média |
+| B43    | Segurança entre threads fora do módulo `task`: o estado global do `random`, a ordem da saída de `print` entre threads, `pen`/`computer` fora da thread principal; cópia profunda de estruturas cíclicas e seu custo; métodos `async` de classe e estado compartilhado de objetos (Cap. 32 e 40) | 42.7, 34.4, 40 | Média |
+| B44    | Códigos `E8xx`/`W8xx` e nomes escolhidos nesta revisão (como o E316 em B27) podem ser trocados; `E816` (`SuspendInSyncFunction`) só é lançado quando a operação realmente suspenderia | 42.16, 37 | Baixa |
 
 **B30 — identidade `is` (pontos em aberto).** (1) Para `is` ter sentido foi preciso dizer que uma variável guarda uma **referência** e que atribuir não copia (`var B = A` → `B is A`); isso vale para coleções, tuplas, funções e instâncias, e é uma regra de modelo de memória nova (o Capítulo 41 só diz "coletor de lixo"). (2) Escalares: o Python deixa `5 is 5` em aberto (depende da implementação); aqui ficou determinístico — **mesmo tipo e mesmo valor** é o mesmo objeto (`5 is 5` verdadeiro, `5 is 5.0` falso). (3) Tuplas foram tratadas como objetos (cada literal cria um novo), embora imutáveis. (4) Não há `is not`: nega-se com `not (A is B)`. (5) O `is` dos braços de `case` continuou valendo como identidade; para escalares dá o mesmo resultado dos exemplos do Capítulo 25, mas `case 5` com braço `is 5.0` não casa — talvez o braço devesse ser `==`.
 
 **B31 — `id` como criador (pontos em aberto).** (1) Como a expansão é anterior à análise de escopos, o nome de um `id` ficou **reservado no arquivo inteiro** (um parâmetro ou uma variável local com esse nome é `IdDuplicate`); a alternativa seria respeitar escopos, o que exige analisar antes de expandir. (2) O passo "coletar e expandir antes do parser" não existe na tabela do Capítulo 35 e não foi numerado (renumerar mudaria as referências às etapas 5, 6 e 8); está ligado a B7. (3) Nomes dentro de strings e de `{ }` de `format` não são expandidos; a alternativa seria expandir dentro das chaves. (4) Não são referências: o nome depois de `.`, e o `nome=` de argumento nomeado. (5) `id` continua sendo uma palavra que só abre declaração no começo de um statement seguido de identificador; `w.id` depois de `.` e `"id"` como chave continuam fora.
 
 **B32 — padrões em `format` (pontos em aberto).** (1) O texto das instruções dizia que `format "ar[*]" == "arroz"` é verdadeiro; para isso um `format` com curinga precisou virar um **padrão** (um valor com `.type` de `str` que `==`/`!=`/`.match()`/`~=` casam), o que reabre a regra da 0.5 de que `==` nunca casa por padrão (ficou: só um padrão explícito casa; string comum nunca). (2) `[*]` casa **zero ou mais**; o antigo `\*` casava **exatamente um** (equivale a `[1*1]`). (3) `[u+H]` com `H` em **hexadecimal** (`[u+2222]` → `∢`; decisão confirmada pelo autor depois de uma primeira versão em decimal); a linguagem não tem literal hexadecimal, então a base vale só dentro do grupo. Dentro de `{ }` (`[u+{C}]`) a expressão é um `int` que é o próprio número do ponto de código (`8738` = `2222` hex) — o que `{ }` aceitaria além de `int` (por exemplo uma `str` `"2222"`) ficou de fora. Dígitos `a-f` em maiúsculas ou minúsculas; de 1 a 6 dígitos. (4) Casamento do texto inteiro, sensível a maiúsculas, qualquer caractere inclusive `\n`. (5) Padrão × padrão compara o texto escrito; padrão × não-`str` é `false`. (6) Não definidos: o que `print` mostra de um padrão, o que acontece com um padrão ao concatenar ou fatiar, e o `.type` (aqui `str`). (7) `\[` e `\]` são escapes novos; todo `format` com `[`/`]` literal precisa deles.
+
+**B33 — canvas sem implementação (pontos em aberto).** (1) Os Capítulos 43 a 53 foram escritos sem interpretador: nenhum exemplo foi executado, e os blocos com `output` são previsões, marcados `tinypine` (e não `tinypine run`) para que `tools/run_examples.py` não os rode. (2) O `textinput` (Cap. 50) supõe que o sistema entrega `ã` e `ç` por um dos caminhos conhecidos (texto da tecla ou composição de IME) e que o motor os une; falta testar em teclado ABNT2 real, em Windows, Linux e macOS. (3) Sem uma fonte embutida fixa o `rect()` de um `text` não é reproduzível entre máquinas (Cap. 48 e 51): qual fonte e qual licença ficou em aberto.
+
+**B34 — caminhos relativos.** O canvas resolve caminhos relativos (`"icon"`, `src` de `image`) a partir da pasta do `.tpine` em execução (`~Program.path`, Cap. 44). O `os.read` (34.6) não define a regra; se resolver pelo diretório de trabalho, quem lê um `.css` precisa montar o caminho a partir de `~Program.path`.
+
+**B35 — literais e impressão de dict.** O `w.css` (Cap. 47) aceita CSS de uma linha ou de arquivo, porque `"""…"""` e `r"…"` não estão definidos (o Cap. 3.1.1 só os cita). Também não está definido o formato de `println` de um `dict`; os exemplos do Cap. 48 imprimem `rect()` campo a campo. Se forem definidos, os exemplos podem ficar mais curtos.
+
+**B36 — objetos nativos e outros pontos da linguagem.** (1) `obj.nome = valor` em objeto nativo chama o motor (nota no Cap. 14); a mesma regra para classes do usuário (Cap. 32) fica para quando o Cap. 40 (Sistema de Objetos) for fechado. (2) `e.meta` (Cap. 49) existe, mas a tabela de teclas do 34.7 não tem `meta`. (3) O Cap. 19.5 diz que `const` não permite mutação de conteúdo e o 19.4.2 diz que permite; o canvas evita depender disso (usa `var` onde o conteúdo de um dict é alterado). (4) O Cap. 31.3 não diz se uma função anônima pode atribuir a uma variável **local** do escopo de fora; os exemplos usam `var $global` ou o próprio elemento. (5) `w.width-10` (com hífen colado) segue o Cap. 3.4.1; um aviso da análise estática para `membro-membro` colado seria útil.
+
+**B37 — decisões do canvas sem confirmação.** (1) Logo depois de gravar `w.width`, a leitura devolve o valor pedido, e passa ao valor real quando chega o evento `resize`. (2) `\n` gravado em `value` de um `input` (campo de uma linha) é indefinido. (3) `w.close()` programático é cancelável por `close`; `canvas.quit()` não consulta. (4) Janelas filhas e modais ficam de fora.
+
+**B38 — fora desta versão do canvas.** Elemento de desenho 2D (`surface`, ligado aos módulos `pen` e `scene`, que ficaram de fora), `checkbox`/`textarea`/`range` e outros controles, barras de rolagem visíveis e arrastáveis, `outline` e `transition`, diálogos nativos, carregar fonte de arquivo, forçar a escala de DPI por janela, pré-edição de IME e texto bidirecional.
 
 **B19 — sintaxe de load (decisão em aberto).** Hoje vale `load "caminho" as Y` (Capítulo 29.5). A alternativa em discussão é uma função de `os`: `os.load("caminho", "as": "Y")`. Nenhuma das duas foi adotada em definitivo; o Capítulo 29.5 continua normativo.
 
@@ -87,7 +111,7 @@ As decisões marcadas **Aceita** foram confirmadas pelo autor do projeto; as dem
 
 **B27 — tipos refinados e acesso por** `key`**/**`value`**.** Decididos (Cap. 6.9 e 19.2): a sintaxe `tipo\restrição\` (que substituiu a primeira proposta, com `<...>`), os tipos aceitos, as propriedades `value`, `length`, `key K` e `value V`, as regras de validação, os operadores, as condições separadas por vírgula e o erro `RefinementViolation (E316)`. O código E316 foi escolhido na redação desta revisão e pode ser trocado. Em aberto:
 
-- **`value V`.** O exemplo `A[value 2] # 2` (com `var A = [1, 2, 3, 4]`) não diz se `value V` procura o valor `V` na coleção ou lê o segundo valor contando de 1 — e, na primeira leitura, o que acontece quando o valor não existe. O mesmo vale para `value 2 < 3` em `[1, 2, 3]: list\values: int, value 2 < 3, key 0==1\`.
+- **`value V`.** O exemplo `A[value 2] # 2` (com `var A = [1, 2, 3, 4]`) não diz se `value V` procura o valor `V` na coleção ou lê o segundo valor contando de 1 — e, na primeira leitura, o que acontece quando o valor não existe. O mesmo vale para `value 2 < 3` em `[1, 2, 3]: list\values: int, value 2 < 3, index 0==1\`.
 
 - **Perda do acesso à chave por posição.** `key K` e `value V` substituem as formas `key, N` e `value, N` (e `key:N` / `value:N`); com elas saiu a única maneira de ler a **chave** armazenada numa posição de um dicionário. Dizer se isso é intencional ou se ganha outra forma.
 
@@ -117,9 +141,23 @@ As decisões marcadas **Aceita** foram confirmadas pelo autor do projeto; as dem
 
 - **Lexer.** `||` abre comentário de bloco, então `str||int` (sem espaços) não é uma união; `|>` é o pipe. O `|` solto fora de posição de tipo foi escrito como `ParserError`.
 
-- **`keys` fora de `dict`.** Em lista e tupla as chaves são os índices (`key K`, Cap. 19.2); `keys:` num tipo `list`/`tuple` não foi definido. Também não está dito o erro de usar `keys`/`values` em tipo que não aceita refinamento (mesma lacuna de B27).
+- **`keys` fora de `dict`.** Em lista e tupla a posição se escreve `index K` na restrição (Cap. 6.9); `keys:` num tipo `list`/`tuple` não foi definido. Também não está dito o erro de usar `keys`/`values` em tipo que não aceita refinamento (mesma lacuna de B27).
 
 - **`function`.** Não está dito se `.type` de método de classe e de função nativa de módulo (por exemplo `math.sqrt`) também é `function`, nem se `function` precisa ser tratada como nome reservado.
+
+**B39 a B44 — concorrência (Capítulo 42).** Decididos na revisão que reescreveu o Capítulo 42 (Apêndice A.6, "Oitava revisão"). Em aberto:
+
+- **B39 — validação de `chan\values: T\`.** Hoje, a cada envio, na execução. Antecipar para o analisador estático (Cap. 35) quando o valor enviado tem tipo conhecido, e dizer se um canal sem refinamento deve inferir `values:`.
+
+- **B40 — erro agregado.** `AggregateError` promete `err.errors`; falta fixar, no Cap. 24, o que é o objeto de erro (string × objeto com propriedades). Falta também decidir como o bloco de erro do Cap. 36.7 mostra um erro ocorrido **dentro de uma tarefa**: a pilha da própria tarefa, a linha onde ela foi criada, ou as duas.
+
+- **B41 — suspensíveis.** A lista de 42.14.4 é fechada e inclui só o que já está especificado. Cada módulo novo precisa declarar as suas.
+
+- **B42 — relógio virtual.** `task.virtual` não vale para threads (que não são determinísticas por natureza) e não move o relógio do canvas. Opções: uma única chave de relógio virtual para os dois módulos, ou threads cooperativas no modo virtual.
+
+- **B43 — o que não foi pensado para threads.** O estado do `random` é global (mesma semente + mesma ordem de chamadas, Cap. 34.4, não vale com chamadas concorrentes de threads); `print` de várias threads pode intercalar linhas; `pen` e `computer` fora da thread principal; a cópia em profundidade ao cruzar threads (42.7) e o que ela faz com estruturas que se referem a si mesmas; métodos `async` de classe e o estado compartilhado de objetos.
+
+- **B44 — códigos.** Faixas `E8xx`/`W8xx` e nomes escolhidos na redação; `E816` é verificado em tempo de execução, apenas quando a operação realmente suspenderia (um `select` com `else` numa função comum nunca é erro).
 
 ### Decisões Aceitas — Sintaxe e Semântica
 
@@ -169,7 +207,7 @@ Mudanças de comportamento ou de sintaxe já confirmadas pelo autor do projeto, 
 
 ### Corrigido
 
-Erros factuais ou de conteúdo no texto de revisões anteriores, sem impacto no comportamento normativo atual (já descrito corretamente nos capítulos 1–42):
+Erros factuais ou de conteúdo no texto de revisões anteriores, sem impacto no comportamento normativo atual (já descrito corretamente nos capítulos 1–53):
 
 - **Descrição de** `math.degrees()` **trocada de "eleva ℯ à potência do número" (função exponencial, incompatível com o próprio exemplo) para conversão de radianos para graus (Cap. 34.2).**
 
@@ -430,3 +468,45 @@ Escopo desta revisão: Cap. 6.7, 6.8, 6.8.1 (novo), 6.9, 29.4, 30.7 e `gramatica
 - **Pendências:** novas B30, B31 e B32; B10 atualizada.
 
 Escopo desta revisão: Cap. 3.2.2, 3.2.3, 11 (11.1 e 11.2), 20 (20.3 novo), 25, 28, 29.5, 35, 36 e 37; Apêndice A.2 (B10, B30 a B32); `tests/exemplos/28-identificadores.md` reescrito na sintaxe nova. Capa mantida em "Versão 0.7". Ideias que ficaram de fora de propósito: testes executáveis de `is` e de padrões (dependem do Sys), `is not`, `format` com curinga fora de comparação, `[ ]` fora do `format`.
+
+**Sétima revisão (pós-0.7) — módulo `canvas` na especificação (Parte X, Capítulos 43 a 53):** os rascunhos do canvas (v3) deixam de ser rascunho e entram como capítulos normativos. Resumo:
+
+- **Capítulos novos:** 43 Visão geral · 44 Janela · 45 Elementos · 46 Estilo · 47 CSS em texto · 48 Layout · 49 Eventos e laço · 50 Entrada de texto · 51 Testes sem tela · 52 Exemplos · 53 Erros e avisos. Numeração depois do Cap. 42, sem mudar a de nenhum capítulo existente.
+- **Conteúdo:** o texto dos rascunhos, sem as marcas de decisão (`Dnn`), sem as faixas de aviso e sem as comparações com versões anteriores dos rascunhos. As decisões D40 a D58, que o autor não tinha anotado uma a uma, entram **como estavam nos rascunhos** (a incorporação é a aceitação); as que continuam em aberto estão em B33 a B38.
+- **Fora da spec:** arquitetura do motor, pesquisa, lista de decisões D01–D58, análise da v2 e mudanças v2→v3 ficam em `docs/canvas/`, sem alteração.
+- **Pontos de contato:** Cap. 14 (nota: atribuição a membro de objeto nativo), 34 (linha `canvas` na tabela e no texto), 36.7 (fonte de erro em texto CSS; códigos `E7xx`/`W7xx` no Cap. 53), 37 (linha do `canvas`; E313 também para objetos nativos) e este apêndice (B33 a B38).
+- **Códigos:** `E701` a `E735` e `W701` a `W705`, definidos no Cap. 53 (antes provisórios).
+- **Não executado:** o interpretador de referência ainda não implementa o módulo; nenhum exemplo da Parte X é executado por `tools/run_examples.py`. Capa mantida em "Versão 0.7".
+
+**Oitava revisão (pós-0.7) — concorrência reescrita (Capítulo 42):** o capítulo, que era um rascunho com sintaxe própria e contradições com o resto da especificação, é reescrito sobre os mesmos princípios do restante do documento. Correções do rascunho:
+
+- **`pause` e tarefas (Cap. 26, 42.2.6):** o rascunho dizia que `pause` bloqueia toda a execução e, no exemplo, que ela deixava o resto continuar. Agora `pause` suspende o **fluxo atual**: o programa inteiro quando não há tarefas, só a tarefa dentro de uma tarefa, só a thread dentro de uma thread.
+- **`chan\int\` (Cap. 6.9):** colidia com a sintaxe de tipo refinado. `chan` passa a ser um tipo refinável com `values: T` e `length`: `chan\values: int\`. `chan\any\` saiu (não existe tipo `any`).
+- **`<|` e `case` no `select` (Cap. 12, 25):** o token `<|` nunca esteve na gramática, e `case` já abre o `match`. Enviar passa a ser `valor |> canal` (o `|>` do Cap. 34.8, em que o destino decide), receber passa a ser `await canal`, e os braços do `select` usam `when`.
+- **`context(timeout: 2.0)`:** inválido na gramática de argumentos (Cap. 30.7). Passa a ser `task.context("timeout": 2.0)`.
+- **Tarefa sem escopo:** o programa é a tarefa raiz e o arquivo é o escopo raiz (42.3.4); toda tarefa tem um escopo implícito.
+- **`async` e `thread`:** deixa de existir `async` como prefixo de chamada. `async` é só modificador (`f async`), chamar uma função `async` cria a tarefa, e `thread` precede uma chamada. Atribuição de handle sempre com `var`.
+- **Funções soltas no texto do rascunho** (`fetch`, `all`, `join`, `context`, `mutex`, ...): ou não existiam (`fetch`) ou ficam agora sob o namespace obrigatório `task.` (Cap. 33).
+
+Melhorias:
+
+- **Concorrência estruturada (42.3):** `scope`, `with parallel`, `with timeout`, parâmetros `timeout`, `policy`, `ctx` e `limit`, tarefas de fundo com `detach()`, falha rápida por padrão, `AggregateError` só quando há mais de uma falha.
+- **Cancelamento como sinal de controle (42.4, Cap. 24):** não é interceptado por `catch`, roda `finally`, é entregue em todo ponto de suspensão; `task.cancelled` para laços de cálculo em threads; `await task.yield()` para laços longos em tarefas; `context` para cancelamento compartilhado.
+- **Canais completos (42.5, 42.6):** `close`, `for x in c`, `finished`, `select` com `when`/`else`/`timeout`, desempate pela ordem escrita (ou `select fair`, reproduzível por `random.seed`), `void` proibido em canais.
+- **Previsibilidade (42.11):** agendador cooperativo FIFO, sem preempção, pontos de suspensão enumerados; sem threads nem E/S real a ordem é sempre a mesma. Modelo de memória com regras *happens-before*.
+- **Threads seguras por padrão (42.7):** cópia de `list`/`dict` mutáveis ao cruzar threads, `const` e `tuple` compartilhados, `ThreadsUnavailable` em vez de substituição silenciosa, `task.threads` e `task.cores`.
+- **Sincronização (42.8):** `lock` como bloco com liberação garantida e `timeout`, semáforo, barreira reutilizável, atômicos, detecção de deadlock (inclusive o do mesmo mutex na mesma tarefa).
+- **Espera coletiva e laços (42.9):** `task.all`/`any`/`join`/`map` (com `limit` e `mode`), `for ..., parallel=true, limit=n`.
+- **Testes determinísticos (42.12):** `task.virtual` e `task.now`, no espírito do Cap. 51.
+- **Canvas (42.13, 49):** o laço do canvas hospeda o agendador, handlers `async`, `canvas.post` como única porta das threads para a interface, `CanvasFromThread` no lugar do antigo "indefinido".
+
+Escopo desta revisão: Cap. 42 reescrito; `gramatica.ebnf` (`async` em `FuncDecl` e `AnonFunc`, nomes de tipo de concorrência, `chan` refinável); Cap. 6.7 e 6.9, 12 (precedência de `await` e `thread`), 21 (`readln` suspensível), 23 (`parallel`, `limit`, `for` sobre canal), 24 (cancelamento e erros em tarefas), 26 (`pause` em tarefas), 34 (linha `task`, `|>` com canal, 34.9), 37, 38 (verificações de concorrência), 49 (`canvas.post`, handlers `async`, `CanvasFromThread`) e 53; Apêndice A.2 (B39 a B44). Códigos `E801` a `E841` e `W801` a `W804`. Numeração de capítulo preservada; capa mantida em "Versão 0.7". O interpretador de referência ainda não implementa nada disto.
+
+**Nona revisão (pós-0.7) — `index` na restrição de tipo refinado (Cap. 6.9):** pedido do autor, aplicado ao Sys na mesma sessão. Resumo das decisões:
+
+- **`index K` (novo):** propriedade de `str`, `list` e `tuple` dentro de `\...\` — o elemento da posição `K`, de `0`, com `K` negativo contando do fim. Cobre os lugares onde a restrição usava `key K` com o sentido de índice (`list\key 0: int\` passa a `list\index 0: int\`).
+- **`key K` fica só para `dict`.** Em `list`, `tuple` e `str` não é mais aceita (a regra de "uma forma só", como nas demais migrações): `TypeMismatch PROBLEM` (E302) com a dica de usar `index`. `index K` em `dict` também é `TypeMismatch` (dica: usar `key`). Posição ausente continua dando `void` (condição falsa), como a chave ausente (B27).
+- **Fora do escopo do pedido, sinalizado:** a forma de acesso `colecao[key K]` (Cap. 19.2) continua valendo para lista, tupla e texto (`A[key 0]`); ela não foi renomeada. Se a ideia é espelhar a restrição, o acesso seria `colecao[index K]` — decidir.
+- **Palavra contextual:** `index` só é propriedade dentro das barras da restrição (esconde ali uma variável de mesmo nome, como `length`, `key` e `value`); fora delas segue um identificador comum.
+- **Arquivos:** Cap. 6.9 (tabela, exemplos, nota "`key` e `index` não se misturam"), 19.2 (frase final), 36.7 (dica de `E124`), `gramatica.ebnf` e este apêndice (B27 e B29).
+

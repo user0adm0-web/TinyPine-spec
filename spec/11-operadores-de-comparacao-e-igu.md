@@ -12,6 +12,7 @@ Palavras-operador (`is`, `in` — Capítulo 12.3 para `of`) são grafadas em min
 | `!=`        | Diferença de valor             | Açúcar sintático para `not (a == b)`. Ver 11.3.                                                             |
 | `!==`       | Diferença de tipo e/ou valor   | Açúcar sintático para `not (a === b)`. Ver 11.3.                                                            |
 | `in`        | Pertencimento por índice/chave | Em string, testa substring. Em lista/dicionário, testa se o ÍNDICE/CHAVE existe — não o valor. Ver 12.3.    |
+| `of`        | Pertencimento por valor        | Verifica se o valor à esquerda está dentro de lista/dicionário                                              |
 | `>`         | Maior que                      | Verifica se o valor à esquerda é maior que o valor à direita. Retorna bool.                                 |
 | `<`         | Menor que                      | Verifica se o valor à esquerda é menor que o valor à direita. Retorna bool.                                 |
 | `>=`        | Maior ou igual                 | Verifica se o valor à esquerda é maior ou igual ao valor à direita. Retorna bool.                           |

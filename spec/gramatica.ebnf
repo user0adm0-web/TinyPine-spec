@@ -2,9 +2,9 @@
    Fonte única: este arquivo é incluído no texto da especificação pelo build. *)
 
 (* declaração *)
-FuncDecl        = "f" [ "const" ] IDENT "(" [ ParamList ] ")"
+FuncDecl        = "f" [ "const" ] [ "async" ] IDENT "(" [ ParamList ] ")"
                   [ ":" Type ] Block ;
-AnonFunc        = "f" "(" [ ParamList ] ")" Block ;
+AnonFunc        = "f" [ "async" ] "(" [ ParamList ] ")" Block ;   (* async: Capítulo 42 *)
 
 (* no máximo três seções, nesta ordem: posicionais, tipados (após "?") e exclusivamente nomeados (após "!") *)
 ParamList       = PosSection [ "," TypedSection ] [ "," NamedSection ]
@@ -51,7 +51,7 @@ Refinement      = "\" Restriction { "," Restriction } "\" ;
 Restriction     = Expr [ ":" ( SimpleType | ConvType ) ] ;
 SimpleType      = TypeName { "|" TypeName } ;
 ConvType        = "to-" TypeName ;
-(* TypeName: os tipos do Capítulo 6, mais function; nenhum tipo usa "<" ">" *)
-(* TypeName refinável nesta versão: int, float, decim, num, str, list, dict, tuple *)
+(* TypeName: os tipos do Capítulo 6, mais function e os tipos de concorrência task, chan, mutex, semaphore, barrier, atomic e context (Capítulo 42); nenhum tipo usa "<" ">" *)
+(* TypeName refinável nesta versão: int, float, decim, num, str, list, dict, tuple, chan *)
 (* uma Restriction não contém outra (Capítulo 3.2): SimpleType nunca leva Refinement *)
-(* dentro de Restriction valem as propriedades value, length, keys, values, "key" Expr e "value" Expr *)
+(* dentro de Restriction valem as propriedades value, length, keys, values, "key" Expr (dict), "index" Expr (str, list, tuple) e "value" Expr *)

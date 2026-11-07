@@ -5,7 +5,7 @@ Esta seção define os seis tipos primitivos escalares do TinyPine e o comportam
 ### str — Texto
 
 ```tinypine
-var nome: str = "Ana"
+var nome: str = "Ana"     # ou sem `var` pois a declaração de tipo já elimina a necessidade de `var`
 var frase = "olá mundo"
 123: str                  # TypeMismatch PROBLEM — 123 não é do tipo str
 true: str                 # TypeMismatch PROBLEM
@@ -72,6 +72,26 @@ Representa números reais com precisão decimal exata (base 10), ideal para cál
 
 `var total: decim = 3 3: decim # OK — Coerção implícita: vira 3 (ou 3.0) com precisão dinâmica`
 
+#### Literal com parte fracionária calculada — `N.(expr)`
+
+Um literal inteiro seguido de `.` e de `(` **colados** (sem espaço) calcula a parte fracionária do número. O conteúdo do parêntese é uma lista de argumentos como a de uma chamada — por isso aceita `unpack` (Capítulo 19.4.1) — e cada valor precisa ser um `int` maior ou igual a `0`. Os dígitos dos valores, em sequência, formam a parte depois do ponto, e o resultado é um `decim` exato.
+
+```tinypine run
+println(1.(3 - 2))
+println(1.(unpack [32] * 2))
+println(3.(0, 5))
+println(-0.(5))
+```
+
+```output
+1.1
+1.3232
+3.05
+-0.5
+```
+
+Um valor que não é `int` maior ou igual a `0` — uma lista sem `unpack`, um `str`, um decimal, um negativo, ou o `unpack` de uma coleção vazia — é `TypeMismatch PROBLEM` (recuperável com `try`). `1.()`, sem valor nenhum, é `ParserError`. A forma só existe depois de um inteiro escrito sem ponto nem expoente: `1.5.(3)` e `1e5.(3)` não são literais.
+
 ### bool — Lógico
 
 ```tinypine
@@ -108,6 +128,8 @@ g.type                        # → function
 ```
 
 `function` é um nome de tipo como `int` ou `str`: serve na asserção (`valor: function`), na declaração (`var g: function = ...`) e dentro de `keys:`/`values:` (Cap. 6.8). Não aceita restrição `\...\` (Cap. 6.9). Como `is` compara só o tipo (Cap. 11.1), duas funções quaisquer são `is` uma da outra.
+
+Os valores criados pelo módulo `task` e pelas funções `async` têm tipos próprios, que também são nomes de tipo: `task`, `chan`, `mutex`, `semaphore`, `barrier`, `atomic` e `context` (Capítulo 42). `.type` devolve o nome do tipo, e só `chan` aceita restrição `\...\` (Cap. 6.9).
 
 ### Tipagem Estruturada de Coleções — `list\...\` e `dict\...\`
 
@@ -176,9 +198,9 @@ Um **tipo refinado** restringe os valores aceitos por um tipo por meio de uma ex
 10: int\value < 100\
 100: int\value == 100\
 "Aaa": str\length == 3\
-[1, 2, 3]: list\values: int, value 2 < 3, key 0==1\
+[1, 2, 3]: list\values: int, value 2 < 3, index 0==1\
 {1: ""}: dict\key "a"==1 or key 1==""\
-[1, 0]: list\key 0: int\                                       # asserção: válido (nada é convertido)
+[1, 0]: list\index 0: int\                                     # asserção: válido (nada é convertido)
 var G: dict\length>1, 1==1, key "a": str\ = {"a": "1", "b": "2"}
 {"a": 1}: dict\keys: str, values: int | str\
 ```
@@ -187,20 +209,23 @@ var G: dict\length>1, 1==1, key "a": str\ = {"a": "1", "b": "2"}
 
 #### Tipos que aceitam refinamento
 
-Nesta versão, apenas: `int`, `float`, `decim`, `num`, `str`, `list`, `dict` e `tuple`. Os demais tipos não aceitam tipos refinados.
+Nesta versão, apenas: `int`, `float`, `decim`, `num`, `str`, `list`, `dict`, `tuple` e `chan` (Capítulo 42.5). Os demais tipos não aceitam tipos refinados.
 
 #### Propriedades disponíveis
 
 | **Propriedade** | **Tipos**                                | **Significado**                                                                                              |
 |-----------------|------------------------------------------|--------------------------------------------------------------------------------------------------------------|
 | `value`         | `int`, `float`, `decim`, `num`           | O próprio valor numérico.                                                                                    |
-| `length`        | `str`, `list`, `dict`, `tuple`           | O comprimento do valor — exatamente o mesmo que `.length` (Cap. 33.3).                                       |
-| `key K`         | `str`, `list`, `dict`, `tuple`           | O elemento de chave `K`: em `dict`, a chave; em `list`, `tuple` e `str`, o índice (forma `colecao[key K]`, Cap. 19.2). |
+| `length`        | `str`, `list`, `dict`, `tuple`, `chan`         | O comprimento do valor — exatamente o mesmo que `.length` (Cap. 33.3); em `chan`, quantos valores estão no buffer.                                       |
+| `key K`         | `dict`                                   | O elemento de chave `K` (forma `colecao[key K]`, Cap. 19.2).                                                 |
+| `index K`       | `str`, `list`, `tuple`                   | O elemento da posição `K`, contando de `0`; `K` negativo conta do fim, como em `colecao[K]` (Cap. 19.2).       |
 | `value V`       | `list`, `dict`, `tuple`                  | O valor dentro da coleção (forma `colecao[value V]`, Cap. 19.2).                                             |
 | `keys`          | `dict`                                   | O conjunto das chaves. `keys: T` afirma que toda chave é do tipo `T` (Cap. 6.8).                             |
-| `values`        | `list`, `dict`, `tuple`                  | O conjunto dos valores. `values: T` afirma que todo valor é do tipo `T` (Cap. 6.8).                          |
+| `values`        | `list`, `dict`, `tuple`, `chan`                  | O conjunto dos valores. `values: T` afirma que todo valor é do tipo `T` (Cap. 6.8); em `chan`, que todo valor enviado é `T`.                          |
 
-Dentro da restrição, as propriedades se referem ao próprio valor que está sendo validado: em `[1, 2, 3]: list\key 0==1\`, `key 0` lê o elemento de chave `0` dessa lista.
+Dentro da restrição, as propriedades se referem ao próprio valor que está sendo validado: em `[1, 2, 3]: list\index 0==1\`, `index 0` lê o elemento da posição `0` dessa lista.
+
+**`key` e `index` não se misturam.** `key K` é só de `dict`; `index K` é só de `str`, `list` e `tuple` (o dicionário não tem posição: a chave é a sua identidade, Cap. 19.1). Usar uma na coleção da outra — `[1, 2]: list\key 0 == 1\` ou `{"a": 1}: dict\index 0 == 1\` — é `TypeMismatch PROBLEM` (E302), com a dica da forma certa. Posição fora da coleção, ou `K` que não é número em `index K`, faz o termo valer `void`: a condição é falsa, sem `IndexOutOfBounds` (a mesma regra da chave ausente, B27).
 
 #### Regras de validação
 
@@ -230,6 +255,6 @@ var G: dict\length>1, 1==1, key "a": str\ = {"a": "1", "b": "2"}
 # 3ª condição: o valor da chave "a" é do tipo str
 ```
 
-Dentro da restrição, `:` seguido de um tipo — ou de uma união `T1 | T2`, Cap. 6.8.1 — faz uma asserção sobre aquela parte do valor (`key "a": str`, `values: int | str`), . **Conversão (`: to-tipo`) não é aceita dentro da restrição:** ela só valida o valor, nunca o transforma, então `int\0: to-bool\` e `list\value 2: to-str\` são `ConversionInRefinement PROBLEM` (E124), erro sintático que aborta o programa antes de rodar. Para validar o tipo de uma parte use a asserção (`key 0: str`); para converter, converta o valor antes (`var x = v: to-str`).
+Dentro da restrição, `:` seguido de um tipo — ou de uma união `T1 | T2`, Cap. 6.8.1 — faz uma asserção sobre aquela parte do valor (`key "a": str`, `values: int | str`), . **Conversão (`: to-tipo`) não é aceita dentro da restrição:** ela só valida o valor, nunca o transforma, então `int\0: to-bool\` e `list\value 2: to-str\` são `ConversionInRefinement PROBLEM` (E124), erro sintático que aborta o programa antes de rodar. Para validar o tipo de uma parte use a asserção (`index 0: str`); para converter, converta o valor antes (`var x = v: to-str`).
 
 > ***Nota:*** *os pontos em aberto deste recurso — semântica de* `value V` *e de* `values`*, chave ausente dentro de uma restrição, uso em parâmetros e retornos de função, e a mensagem de erro para tipos que não aceitam refinamento — estão registrados no Apêndice A.2 (B27); os da tipagem estruturada, da união `|` e de* `function` *estão em B29.*

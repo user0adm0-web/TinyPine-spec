@@ -54,7 +54,9 @@ var ativo = true: to-bool
 var vazio = false: to-bool
 1: to-bool         # true
 0: to-bool         # false
+-1: to-bool        # true
 "true": to-bool    # true
+null: to-bool      # false
 "": to-bool        # false
 var A
 A: to-bool       # InvalidConversion PROBLEM — void não pode ser convertido

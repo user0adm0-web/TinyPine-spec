@@ -55,6 +55,32 @@ f nunca(n)           # UnusedFunction: Function 'nunca' was declared but never c
   return n * 2
 ```
 
+### Verificações de Concorrência
+
+O analisador também confere o uso das construções do Capítulo 42. Como as demais verificações, **na dúvida não avisa**, e todo aviso pode ser escondido com `#~ hide`.
+
+| **Verificação**                                                                                                  | **Resultado**                      |
+|------------------------------------------------------------------------------------------------------------------|------------------------------------|
+| `await` dentro de uma função que não é `async` (e fora do nível de cima do programa)                             | `AwaitOutsideAsync PROBLEM` (E801) |
+| `with parallel` com uma instrução que não é uma chamada                                                          | `InvalidParallelBody PROBLEM` (E802) |
+| `select` com `else` e `when timeout`, com mais de um `else`, ou sem braços                                       | `InvalidSelect PROBLEM` (E803)     |
+| `await` sobre um valor que, pelo texto, não é aguardável (um literal, uma `str`, uma lista)                      | `NoopAwait WARNING` (W801)         |
+| criar uma tarefa fora de `scope`/`with parallel`, sem guardar o handle, sem `await` e sem `detach()`              | `DiscardedTask WARNING` (W802)     |
+| `readln()` ou `os.read(...)` (e as demais suspensíveis, 42.14.4) **sem** `await` dentro de função `async`        | `BlockingCall WARNING` (W803)      |
+| escrever numa `var` de fora, sem `lock`, dentro de uma função lançada com `thread`                               | `UnprotectedSharedWrite WARNING` (W804) |
+| braços de `select` escritos depois de um `else`                                                                  | `UnreachableCode WARNING` (W203)   |
+
+```tinypine
+var total = 0
+f soma(n)
+  repeat n
+    total = total + 1       # UnprotectedSharedWrite: escrita sem lock numa função lançada com thread
+
+var t = thread soma(1000)
+```
+
+A verificação de `UnprotectedSharedWrite` é uma heurística sobre o texto: considera apenas atribuições e métodos de mutação diretos sobre uma variável de fora do corpo da função, e não acompanha a variável por dentro de outras funções.
+
 ### Autocompletar do Editor (fora do interpretador)
 
 Recursos de autocompletar — por exemplo, inserir automaticamente o recuo esperado ao abrir um bloco, ou detectar e sinalizar mistura de TAB e espaço enquanto o programador digita — são recursos do editor/IDE do TinyPine, e não do interpretador. Eles apenas auxiliam a escrita: não alteram a lógica do programa, e podem ser desativados pelo programador.

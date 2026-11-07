@@ -20,6 +20,8 @@ var qualquer = readln(“active”:false)               # sem min/max — nenhum
 var nome = readln(“min”:3, “max”:20, “active”:false)    # dá pra combinar sem validar
 ```
 
+`readln()` é uma função **suspensível** (Capítulo 42.2.4): dentro de uma tarefa, `await readln()` espera a digitação sem bloquear as outras tarefas nem a janela do canvas; sem `await`, bloqueia tudo enquanto espera, como sempre (e, dentro de uma função `async`, emite `BlockingCall WARNING`, W803).
+
 ### Parâmetros de Representação Visual — show, sep, last
 
 `readln()` aceita três argumentos nomeados adicionais — `show`, `sep` e `last` — que controlam exclusivamente a forma como a entrada é exibida no console, sem alterar o valor efetivamente capturado e retornado. Eles coexistem com `min`, `max` e `active` (Capítulo 21): esses validam a entrada; `show`/`sep`/`last` apenas mudam sua representação visual. Todos são omissíveis e combináveis livremente, sem ordem obrigatória entre si.

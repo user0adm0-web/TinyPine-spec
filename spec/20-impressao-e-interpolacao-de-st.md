@@ -73,6 +73,21 @@ format "{A.length}"   # válido
 
 > ***Nota:*** *o resultado de cada um desses dois exemplos (a interação do* `-` *com a regra do Capítulo 3.4.1 e o* `.length` *de um número) ainda não está definido — Apêndice A.2, B28.*
 
+**Erro de sintaxe dentro de `{ }`.** O conteúdo de `{ }` é uma expressão: o que não for uma expressão válida (`{A +}`, `{unpack A}`, `{1, 2}`) é `ParserError (E101)`, nunca texto literal. Num `format` escrito como literal, o erro vem **antes** de o programa executar e aponta para o trecho `{ }`; numa string que chega por variável, lista ou dicionário, ele aparece quando o `format` é avaliado (recuperável com `try`). Continuam como texto um `{}` vazio e um nome que ainda não existe (`{nada}`).
+
+Para escrever chaves e colchetes como texto, use as barras: `\{`, `\}`, `\[` e `\]` (Capítulo 3.2.2). Eles não abrem `{ }` nem grupo `[ ]`:
+
+```tinypine run
+var A = 1
+println(format "\{A\} vale {A}")
+println(format "ok \[*\] e {A}")
+```
+
+```output
+{A} vale 1
+ok [*] e 1
+```
+
 ### Curingas e caracteres Unicode com [ ]
 
 Dentro de um `format`, os colchetes abrem um **grupo**. Há dois tipos de grupo, e **nada mais** é aceito entre `[` e `]`:

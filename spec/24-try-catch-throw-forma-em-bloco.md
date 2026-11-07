@@ -18,4 +18,6 @@ Até a v0.4, a forma em bloco e o operador `.try` (removido na 0.5 — ver Capí
 
 ### try sem catch
 
-Um bloco `try` sem cláusula `catch` não descarta erros silenciosamente. Qualquer exceção capturada nessas condições emite o aviso `UncaughtInTry WARNING`. Sinais de controle de fluxo (`return`, `break`, `continue`, `done`) nunca são interceptados por `try` — apenas erros de execução.
+Um bloco `try` sem cláusula `catch` não descarta erros silenciosamente. Qualquer exceção capturada nessas condições emite o aviso `UncaughtInTry WARNING`. Sinais de controle de fluxo (`return`, `break`, `continue`, `done` e o **cancelamento de tarefa**, Capítulo 42.4) nunca são interceptados por `try` — apenas erros de execução. Os blocos `finally` rodam também quando o sinal passa por eles.
+
+**Erros em tarefas.** O erro de uma tarefa é guardado nela e relançado em quem a espera (`await`, fim de `scope`, `task.all`…), onde `try`/`catch` o captura normalmente; com mais de uma falha no mesmo escopo, o erro é `AggregateError` (E812), e `err.errors` lista todas (Capítulo 42.10).

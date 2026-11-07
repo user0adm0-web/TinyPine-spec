@@ -35,7 +35,7 @@ A tabela a seguir consolida a precedência entre todos os operadores da linguage
 | **Prioridade** | **Símbolo(s)**                                                    |
 |----------------|-------------------------------------------------------------------|
 | 1              | `( )`                                                             |
-| 2              | `not`                                                             |
+| 2              | `not`, `await`, `thread`                                          |
 | 3              | `*`, `/`, `**`, `%`                                               |
 | 4              | `+`, `-`                                                          |
 | 5              | `&and`, `&or`, `&xor`                                             |
@@ -46,7 +46,9 @@ A tabela a seguir consolida a precedência entre todos os operadores da linguage
 | 10             | `\|>`                                                              |
 | 11             | `IF`                                                              |
 
-O operador `|>` (34.8) foi incluído nesta tabela por consolidar a precedência geral da linguagem — abaixo inclusive de `( )`, e só perde em prioridade pro próprio if pós-fixo (Capítulo 12.4), o único operador mais baixo que ele. Nem `|>` nem if são operadores lógicos como os demais desta tabela: `|>` envia o valor à sua esquerda para o destino à sua direita (ver 34.8); if decide se a expressão à sua esquerda chega a ser avaliada (ver 12.4).
+O operador `|>` (34.8) foi incluído nesta tabela por consolidar a precedência geral da linguagem — abaixo inclusive de `( )`, e só perde em prioridade pro próprio if pós-fixo (Capítulo 12.4), o único operador mais baixo que ele. `await` e `thread` (Capítulo 42) são prefixos com a mesma precedência de `not`: `await f() + 1` lê-se `(await f()) + 1`, e `thread` só aceita uma chamada como operando. Quando o destino de `|>` é um canal, o valor é enviado a ele (Capítulo 42.5).
+
+Nem `|>` nem if são operadores lógicos como os demais desta tabela: `|>` envia o valor à sua esquerda para o destino à sua direita (ver 34.8); if decide se a expressão à sua esquerda chega a ser avaliada (ver 12.4).
 
 ### Operadores Bit a Bit — prefixo &
 

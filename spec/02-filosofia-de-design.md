@@ -10,7 +10,7 @@ O TinyPine foi desenvolvido seguindo um conjunto de princípios fundamentais, de
 | Escopo definido por indentação     | O escopo léxico é determinado pela indentação: 2 espaços ou 1 TAB por nível, nunca os dois tipos misturados no mesmo escopo.                                                                                                                        |
 | Delimitação explícita de blocos    | Blocos abrem na quebra de linha após a assinatura e fecham por `indentação` (recuo): o corpo é toda linha mais recuada que a assinatura, e o bloco termina na primeira linha que volta ao recuo da assinatura ou a um nível menor (ver Capítulo 4). |
 | Modificação pós-declaração         | Blocos podem ser referenciados e modificados por identificadores, inclusive antes de sua declaração textual (referência antecipada).                                                                                                                |
-| Blocos especiais controlados       | Determinadas construções (`debug`, `js`, `loop`) são controladas diretamente pelo interpretador, fora do modelo geral de funções.                                                                                                                   |
+| Blocos especiais controlados       | Determinadas construções (`debug`, `loop`) são controladas diretamente pelo interpretador, fora do modelo geral de funções.                                                                                                                   |
 
 Complementarmente, o projeto adota os seguintes princípios de mais alto nível:
 

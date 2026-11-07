@@ -33,6 +33,17 @@ print(A)
 # → 56
 ```
 
+Uma segunda forma de declaração está disponível, sem a necessidade de usar `var`:
+
+```tinypine
+A: int = 5
+A = A.add(6)
+print(A)
+# → 56
+```
+
+A forma acima utiliza a declaração de tipo para dispensar `var`. A variável será mutável por padrão. Para declarar uma constante, ainda será necessário utilizar `const`.
+
 Sobre strings, é possível atribuir diretamente a uma posição de índice para inserir conteúdo a partir daquele ponto:
 
 ```tinypine

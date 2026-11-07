@@ -13,67 +13,70 @@ while ativo
   ativo = false
 ```
 
-### for — Iteração com Índice e Passo Manual
+### for — Iteração sobre Coleções e Intervalos
 
-Leitura de referência: "para cada valor de 1 até 10, envie para A".
+O `for` itera sobre uma coleção ou intervalo. Diferente do `while`, ele avança sozinho: a cada ciclo a variável de iteração recebe o próximo elemento.
 
-A forma padrão é `for i = 0, i < 10`, sem parênteses (mesmo estilo de `if`/`while`/`return`, Capítulo 4.6). A terceira cláusula (passo) do cabeçalho é opcional: o normal é escrever o passo como *statement* comum na primeira ou última linha do corpo. A forma com passo no cabeçalho também continua válida (Capítulo 23.2.1) — as duas coexistem.
-
-**O** `for` **nunca avança sozinho:** se nada dentro do corpo reatribuir a variável de controle, o laço não termina. Isso vale tanto para a forma com passo no corpo quanto para a forma com passo no cabeçalho.
+Sintaxe básica:
 
 ```tinypine
-|| índice simples ||
-for i = 0, i < 10
+for i in lista
+  print(i)
+```
+
+Para intervalos numéricos usa-se a forma `[início to fim]`:
+
+```tinypine
+for i in [1 to 10]
   print(i, " ")
-  i = i + 1
-# Saída: 0 1 2 3 4 5 6 7 8 9
-|| índice + elemento derivado ||
-var lista = ["a", "b", "c"]
-for i = 0, i < lista.length
-  var e = lista[i]
-  print(i, e)
-  i = i + 1
-|| passo customizado (dois em dois) ||
-for i = 0, i < lista.length
-  var e = lista[i]
-  print(i, e)
-  i = i + 2
-|| reverso ||
-for i = lista.length - 1, i >= 0
-  var e = lista[i]
-  print(i, e)
-  i = i - 1
+# Saída: 1 2 3 4 5 6 7 8 9 10
 ```
 
-#### Forma Avançada — Regra de Passo Customizada
+#### Parâmetros
 
-A regra de passo é a terceira cláusula do cabeçalho do `for`. O interpretador usa a expressão informada como fórmula para calcular o próximo valor a cada iteração — permitindo passos não lineares.
+O `for` aceita parâmetros nomeados no mesmo estilo das funções (`nome=value` ou `"nome": value`). Os parâmetros oficiais são:
+
+| Parâmetro | Padrão | Efeito |
+|-----------|--------|--------|
+| `start`   | início da coleção/intervalo | Valor inicial da iteração |
+| `end`     | fim da coleção/intervalo    | Valor final (inclusive) |
+| `step`    | `1`                         | Incremento entre elementos |
+| `parallel` | `false`                     | `true`: cada volta roda como uma tarefa `async`; o `for` só termina quando todas terminam (Capítulo 42.9.3) |
+| `limit`    | sem limite                  | Com `parallel=true`: no máximo `limit` voltas ao mesmo tempo |
+
+Exemplos:
 
 ```tinypine
-var x = 0
-for x <= 10, x = x + 2
-  print(x)
-# Saída: 2 4 6 8 10
- 
-var B = 0
-for B <= 64, B = B * 2: print(x) --
-# Saída: 1 2 4 8 16 32 64
- 
-x = 0
-for x <= 91, x = x + 10: print(x) --
-# Saída: 1 11 21 31 41 51 61 71 81 91
+|| passo de 2 ||
+for i in [1 to 10], step=2
+  print(i, " ")
+# Saída: 1 3 5 7 9
+
+|| contagem regressiva ||
+for i in [10 to 1], step=-1
+  print(i, " ")
+# Saída: 10 9 8 7 6 5 4 3 2 1
+
+|| start e end explícitos sobre lista ||
+var lista = ["a", "b", "c", "d", "e"]
+for i in lista, start=1, end=3
+  print(i)
+# Saída: b c d
 ```
+
+Quando `start`, `end` ou `step` são usados sobre uma lista, eles atuam sobre os índices (0-based). Quando usados sobre um intervalo `[a to b]`, atuam diretamente sobre os valores.
+
+**`for` sobre um canal.** Quando o objeto é um `chan` (Capítulo 42.5), o `for` recebe valor a valor até o canal fechar e esvaziar; `break` e `continue` valem como de costume, e cada volta é um ponto de suspensão.
 
 #### Modo Gerador (Stream / Generator)
 
-Quando `for` é usado dentro de uma função combinado com a instrução `emit`, ele assume o comportamento de um produtor de fluxo (*stream*). `emit` não encerra a função no primeiro ciclo: emite o valor atual e aguarda o próximo passo do laço. Quando `for` ultrapassa o limite definido, o interpretador emite um sinal interno de finalização, e o chamador encerra graciosamente.
+Quando `for` é usado dentro de uma função combinado com a instrução `emit`, ele assume o comportamento de um produtor de fluxo (*stream*). `emit` não encerra a função no primeiro ciclo: emite o valor atual e aguarda o próximo passo do laço. Quando o `for` esgota os elementos, o interpretador emite um sinal interno de finalização, e o chamador encerra graciosamente.
 
 ```tinypine
-var A = 0
-f contagem(A)
-  for A <= 100, A = A + 1
-    emit(A)
-print(contagem(A), “last”:' ')
+f contagem()
+  for i in [1 to 100]
+    emit(i)
+print(contagem(), "last": " ")
 # Saída: 1 2 3 ... 99 100 (em série, ciclo a ciclo)
 ```
 
@@ -83,9 +86,9 @@ Fluxo do modo gerador:
 
 - `emit(A)` **emite o valor para o chamador, que o consome imediatamente.**
 
-- **Esse processo se repete até que o limite do** `for` **seja ultrapassado.**
+- **Esse processo se repete até que o** `for` **esgote os elementos.**
 
-- **Condição de parada: ao ultrapassar o limite,** `for` **emite o sinal interno** `done`**, encerrando a execução do chamador de forma graciosa.**
+- **Condição de parada: ao esgotar a coleção/intervalo,** `for` **emite o sinal interno** `done`**, encerrando a execução do chamador de forma graciosa.**
 
 **emit não depende do tipo de laço.** O que torna a função um gerador é a presença de `emit` no seu corpo, não o laço usado: `emit` funciona com `for`, com `while` e fora de qualquer laço. A função é executada sob demanda, e cada `emit` entrega um valor ao chamador.
 

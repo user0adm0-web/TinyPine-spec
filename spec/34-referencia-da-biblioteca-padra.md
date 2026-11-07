@@ -20,9 +20,11 @@ Cada módulo tem um papel definido dentro da biblioteca padrão do TinyPine:
 | `scene`     | Renderização 3D (dinâmica).                                                      |
 | `input`     | Descontinuado                                                                    |
 | `web`       | Funcionalidades relacionadas à web.                                              |
+| `canvas`    | Janelas, árvore de elementos, estilo no formato do CSS e laço de eventos (Parte X, Capítulos 43 a 53). |
+| `task`      | Tarefas, canais, escopos, threads e sincronização (Capítulo 42).                 |
 | `clipboard` | Descontinuado — funcionalidade absorvida por `computer.clipboard (34.7)`.        |
 
-Dos módulos listados acima, apenas `math`, `pen`, `random`, `os` e `computer` têm suas funções, parâmetros e comportamento de erro detalhados nesta especificação (34.2 a 34.4, 34.6 e 34.7); os demais (`system`, `time`, `json`, `scene`, `web`, `clipboard`) são, por ora, anunciados apenas por esta tabela de visão geral (ver Histórico, Apêndice A — pendência de alta prioridade).
+Dos módulos listados acima, apenas `math`, `pen`, `random`, `os` e `computer` têm suas funções, parâmetros e comportamento de erro detalhados neste capítulo (34.2 a 34.4, 34.6 e 34.7), o `canvas` tem a Parte X inteira (Capítulos 43 a 53) e o `task` tem o Capítulo 42 (referência em 42.14); os demais (`system`, `time`, `json`, `scene`, `web`, `clipboard`) são, por ora, anunciados apenas por esta tabela de visão geral (ver Histórico, Apêndice A — pendência de alta prioridade).
 
 ### Módulo math
 
@@ -291,5 +293,11 @@ print(
 A linguagem evita uma função de execução dedicada, como `computer.run(...)`; a execução é representada pelo destino do encaminhamento (por exemplo, `script |> computer.shell("node")`), o que torna a linguagem mais uniforme.
 
 Um destino `computer.shell(programa)` devolve o mesmo dict de `computer.shell(programa, valor)` (34.7), de modo que `println("dir" |> computer.shell("cmd"))` imprime o dict inteiro. A semântica formal de \|\> em caso de destino inválido, e o tipo do valor retornado quando o destino não produz saída (como `computer.clipboard`), ainda não estão fechados (ver Histórico, Apêndice A).
+
+Um **canal** (Capítulo 42.5) também é um destino válido: `valor |> canal` envia o valor ao canal, e é o destino que decide que isso é um envio (que suspende a tarefa se o canal está cheio).
+
+### Módulo task
+
+O módulo `task` reúne canais, mutex, semáforo, barreira, atômicos, contexto de cancelamento, espera coletiva e relógio virtual. As palavras `async`, `await`, `scope`, `with`, `thread`, `lock` e `select` são da própria linguagem e não precisam de `use`. A descrição completa — funções, membros, erros e exemplos — está no Capítulo 42, e a tabela de referência, em 42.14.
 
 **Aviso:** os Capítulos 1–34 (Partes I–VII) já cobrem tudo que é preciso pra escrever programas em TinyPine. Os capítulos desta parte documentam o funcionamento interno do interpretador (pipeline de processamento, tabelas exaustivas de casos de borda, catálogo de códigos de erro, análise estática) — referência de consulta, não leitura obrigatória pra usar a linguagem no dia a dia. Quem só quer escrever TinyPine pode parar por aqui; quem quer entender como o interpretador decide o que decide, ou depurar um caso extremo, continua.

@@ -63,7 +63,7 @@ print(A[value 2]) # 2
 print(A[0])       # 1
 ```
 
-As formas explícitas `key K` e `value V` substituem as antigas `key, N` e `value, N` (e `key:N` / `value:N`), que deixam de existir. As mesmas formas, sem o nome da coleção, são usadas dentro da restrição de um tipo refinado (Capítulo 6.9).
+As formas explícitas `key K` e `value V` substituem as antigas `key, N` e `value, N` (e `key:N` / `value:N`), que deixam de existir. Dentro da restrição de um tipo refinado (Capítulo 6.9) as mesmas formas valem sem o nome da coleção, com uma diferença: `key K` é só de dicionário, e a posição de `list`, `tuple` e `str` se escreve `index K` (`list\index 0: int\`).
 
 A ordem dos elementos é sempre preservada exatamente conforme a inserção; o acesso por índice (`colecao[N]`) usa essa mesma ordem.
 
@@ -188,6 +188,20 @@ print(unpack B)
 var A = [1, 2, 3]
 println([unpack A, 4])       # [1, 2, 3, 4]
 println([0, unpack A, 9])    # [0, 1, 2, 3, 9]
+```
+
+**`unpack` é a última operação do argumento.** Ele cobre a expressão **inteira** do argumento (ou do item da lista) em que aparece: `unpack [3] * 7` espalha `[3] * 7`, não `[3]` vezes `7`. `unpack` dentro de uma operação (`"1." + unpack A`) é `ParserError`: ele só existe como argumento inteiro ou item de lista.
+
+```tinypine run
+println(unpack [3] * 7)
+println(unpack [1, 2] + [3])
+println([0, unpack [1] * 3, 9])
+```
+
+```output
+3333333
+123
+[0, 1, 1, 1, 9]
 ```
 
 #### Atribuição por Índice/Chave — Edição de Elemento Existente

@@ -18,6 +18,6 @@ A partir da 0.7, essa distinção é formalizada como princípio central da ling
 ```tinypine
 var A = 10
 A = "a"          # válido — sem tipo declarado
-var A: int = 10
+var A: int = 10 # ou apenas `A: int = 10`, sem a necessidade de `var`
 A = "a"          # StaticTypeMismatch PROBLEM — incompatível com A: int
 ```
